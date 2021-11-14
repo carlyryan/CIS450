@@ -48,7 +48,7 @@ host_since                   object
 host_location                object
 host_about                   object CAN BE NULL
 host_response_time           object ENUM
-  {'a few days or more', 'unknown', 'within a day', 'within a few hours', 'within an hour'}
+  {'a few days or more', 'within a day', 'within a few hours', 'within an hour'}
 host_response_rate            int64
 host_acceptance_rate          int64
 host_is_superhost              bool

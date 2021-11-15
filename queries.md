@@ -12,6 +12,17 @@ SELECT *
 FROM Yelp y
 WHERE y.postal_code = 78748;
 
+-- zipcodes sorted by average yelp price range
+SELECT postal_code, AVG(RestaurantsPriceRange2) as avg_price
+FROM Yelp
+GROUP BY postal_code
+ORDER BY avg_price;
+
+-- airbnbs sorted by price/# beds
+SELECT *, price/beds as price_per_bed
+FROM Airbnb
+WHERE beds > 0
+ORDER BY price/beds;
 ```
 
 

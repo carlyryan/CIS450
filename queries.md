@@ -78,3 +78,38 @@ WHERE ABS(l.longitude - a.longitude) + ABS(l.latitude + a.latitude) <= ALL (
 )
 ORDER BY ABS(l.longitude - a.longitude) + ABS(l.latitude + a.latitude);
 
+-- find the airbnb with the best host and most nearby restaurants
+with Airbnb_to_host as (SELECT a.id, h.host_acceptance_rate
+    FROM Airbnb a join Host h on a.host_id = h.host_id
+    where h.host_is_superhost = 'True')
+Select a.id, a.name, host_acceptance_rate, COUNT(distinct y.business_id) as num_restaurants_nearby
+FROM Airbnb_to_host ah
+    JOIN Airbnb a on ah.id = a.id
+    JOIN Yelp y
+    JOIN Yelp_Categories yc on y.business_id = yc.business_id
+WHERE yc.category = 'Restaurants'
+  AND ABS(y.longitude - a.longitude) + ABS(y.latitude + a.latitude) <= 60.4
+GROUP BY 1, 2, 3;
+
+-- find the airbnb with at least 1 indian restaurants and one Convenience Store or Grocery nearby (within lat long diff of )
+with Yelp_groceries as (SELECT y.business_id, y.name, y.latitude, y.longitude
+    FROM Yelp y
+           NATURAL JOIN Yelp_Categories c
+    WHERE c.category = 'Grocery'),
+    Yelp_convenience as (SELECT y.business_id, y.name, y.latitude, y.longitude
+    FROM Yelp y
+           NATURAL JOIN Yelp_Categories c
+    WHERE c.category = 'Convenience Stores'),
+    Yelp_indian as (SELECT y.business_id, y.name, y.latitude, y.longitude
+    FROM Yelp y
+           NATURAL JOIN Yelp_Categories c
+    WHERE c.category = 'Indian')
+Select a.id, a.name, count(g.business_id), count(c.business_id), count(i.business_id)
+FROM Airbnb a
+    JOIN Yelp_groceries g
+    JOIN Yelp_convenience c
+    JOIN Yelp_indian i
+WHERE ABS(i.longitude - a.longitude) + ABS(i.latitude + a.latitude) <= 60.4
+    AND ABS(g.longitude - a.longitude) + ABS(g.latitude + a.latitude) <= 60.4
+    OR ABS(c.longitude - a.longitude) + ABS(c.latitude + a.latitude) <= 60.4
+GROUP BY 1, 2;

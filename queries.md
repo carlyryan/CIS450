@@ -93,7 +93,8 @@ WHERE yc.category = 'Restaurants'
 GROUP BY 1, 2, 3;
 
 -- This query is to find the airbnb with at least 1 Indian restaurant and one Convenience Store OR Grocery nearby 
--- (within lat long diff of less than 62). It makes 3 subtables and finds the airbnbs that satisfy this condition, along with the count of the number of yelp offerings. 
+-- (within lat long diff of less than 62). It makes 3 subtables and finds the airbnbs that satisfy this condition, 
+-- along with the count of the number of yelp offerings. 
 with Yelp_groceries as (SELECT y.business_id, y.name, y.latitude, y.longitude
     FROM Yelp y
            NATURAL JOIN Yelp_Categories c

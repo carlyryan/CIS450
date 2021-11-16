@@ -25,6 +25,17 @@ WHERE beds > 0
 ORDER BY price/beds;
 ```
 
+-- best airbnb rating to price ratio, we want this ratio to be high!
+SELECT a.name,
+    ROUND(((a.review_scores_rating)/(a.price)*10000), 3) as ratio
+FROM Airbnb a
+order by 2 desc;
+
+-- best yelp rating to price ratio, we want this ratio to be high!
+SELECT y.name,
+    ROUND((y.stars)/(y.RestaurantsPriceRange2), 3) as ratio
+FROM Yelp y
+order by 2 desc;
 
 ## Complex queries
 ```SQL

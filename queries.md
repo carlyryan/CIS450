@@ -23,7 +23,6 @@ SELECT *, price/beds as price_per_bed
 FROM Airbnb
 WHERE beds > 0
 ORDER BY price/beds;
-```
 
 -- best airbnb rating to price ratio, we want this ratio to be high!
 SELECT a.name,
@@ -36,6 +35,7 @@ SELECT y.name,
     ROUND((y.stars)/(y.RestaurantsPriceRange2), 3) as ratio
 FROM Yelp y
 order by 2 desc;
+```
 
 ## Complex queries
 ```SQL

@@ -106,9 +106,8 @@ FROM Airbnb_to_host ah
     JOIN Yelp y
     JOIN Yelp_Categories yc on y.business_id = yc.business_id
 WHERE yc.category = 'Restaurants'
-  AND ABS(y.longitude - a.longitude) + ABS(y.latitude + a.latitude) <= 60.4
+  AND ABS(y.longitude - a.longitude) <= 0.05 and ABS(y.latitude - a.latitude) <= 0.05
 GROUP BY 1, 2, 3;
-
 
 -- This query is to find the airbnb with at least 1 Indian restaurant and one Convenience Store OR Grocery nearby 
 -- (within lat long diff of less than 62). It makes 3 subtables and finds the airbnbs that satisfy this condition, 
@@ -126,12 +125,12 @@ with Yelp_groceries as (SELECT y.business_id, y.name, y.latitude, y.longitude
     FROM Yelp y
            NATURAL JOIN Yelp_Categories c
     WHERE c.category = 'Indian')
-Select a.id, a.name, count(g.business_id), count(c.business_id), count(i.business_id)
+Select a.id, a.name, count(distinct g.business_id), count(distinct c.business_id), count(distinct i.business_id)
 FROM Airbnb a
     JOIN Yelp_groceries g
     JOIN Yelp_convenience c
     JOIN Yelp_indian i
-WHERE ABS(i.longitude - a.longitude) + ABS(i.latitude + a.latitude) <= 60.4
-    AND ABS(g.longitude - a.longitude) + ABS(g.latitude + a.latitude) <= 60.4
-    OR ABS(c.longitude - a.longitude) + ABS(c.latitude + a.latitude) <= 60.4
+WHERE (ABS(i.longitude - a.longitude) <= 0.01 AND ABS(i.latitude - a.latitude)  <= 0.01)
+    AND (ABS(g.longitude - a.longitude) <= 0.01 AND ABS(g.latitude - a.latitude) <= 0.01)
+    OR (ABS(c.longitude - a.longitude) <= 0.01 AND ABS(c.latitude - a.latitude)  <= 0.01)
 GROUP BY 1, 2;

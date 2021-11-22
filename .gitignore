@@ -1,1 +1,6 @@
-datasets/yelp_academic_dataset_business.json
+datasets
+Pipfile
+Pipfile.lock
+*/config.json
+*.DS_Store
+.ipynb_checkpoints

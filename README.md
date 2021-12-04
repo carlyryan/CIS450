@@ -56,3 +56,45 @@ host_neighbourhood           object
 host_total_listings_count     int64
 
 ```
+
+Yelp cleaned:
+```
+Unnamed: 0                    int64
+business_id                  object
+name                         object
+address                      object
+postal_code                 float64
+latitude                    float64
+longitude                   float64
+stars                       float64
+review_count                  int64
+hours                        object
+RestaurantsPriceRange2        int64
+ByAppointmentOnly              bool
+DogsAllowed                    bool
+RestaurantsDelivery            bool
+RestaurantsTakeOut             bool
+WheelchairAccessible           bool
+RestaurantsGoodForGroups       bool
+OutdoorSeating                 bool
+GoodForKids                    bool
+HappyHour                      bool
+Alcohol                        bool
+MonHours                     object
+TuesHours                    object
+WedHours                     object
+ThursHours                   object
+FriHours                     object
+SatHours                     object
+SunHours                     object
+romantic                       bool
+intimate                       bool
+classy                         bool
+hipster                        bool
+divey                          bool
+touristy                       bool
+trendy                         bool
+upscale                        bool
+casual                         bool
+FullBar                        bool
+```

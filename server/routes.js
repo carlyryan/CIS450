@@ -36,7 +36,7 @@ async function restaurants(req, res) {
   const stars = req.query.stars ? req.query.stars : 0
   if (stars > 0) {
     connection.query(`SELECT y.name FROM Yelp y JOIN Yelp_Categories c on y.business_id = c.business_id
-    WHERE c.category LIKE '%${cuisine}%' and y.name LIKE '%${name}%' and y.stars => ${stars}`, function (error, results, fields) {
+    WHERE c.category LIKE '%${cuisine}%' and y.name LIKE '%${name}%' and y.stars >= ${stars}`, function (error, results, fields) {
         if (error) {
             console.log(error)
             res.json({ error: error })

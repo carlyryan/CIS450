@@ -19,7 +19,6 @@ class HomePage extends React.Component {
         {/* Define menu bar code here */}
         <MenuBar />
         <Hero />
-
         <Center >
           <StatCard />
           <StatCard />

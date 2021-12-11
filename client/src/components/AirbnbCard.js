@@ -1,4 +1,4 @@
-// Sample card from Airbnb
+
 import {
   Box,
   Image,
@@ -11,8 +11,7 @@ import {
 
 import React from 'react'
 
-
-export default function AirbnbCard() {
+export default function AirbnbCard(props) {
   const property = {
     imageUrl: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
     imageAlt: 'Rear view of modern home with pool',
@@ -23,11 +22,12 @@ export default function AirbnbCard() {
     reviewCount: 34,
     rating: 4,
   }
+
   return (
     <Box
       maxW='sm'
       borderWidth='1px'
-      borderRadius='lg'
+      borderRadius='md'
       overflow='hidden'
       boxShadow={'2xl'}
     >

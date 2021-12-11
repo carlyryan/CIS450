@@ -11,7 +11,7 @@ import {
 
 import React from 'react'
 
-export default function AirbnbCard(props) {
+export default function RestaurantCard(props) {
   const property = {
     imageUrl: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
     imageAlt: 'Rear view of modern home with pool',
@@ -22,6 +22,7 @@ export default function AirbnbCard(props) {
     reviewCount: 34,
     rating: 4,
   }
+
   return (
     <Box
       maxW='sm'
@@ -35,7 +36,7 @@ export default function AirbnbCard(props) {
       <Box p='6'>
         <Box display='flex' alignItems='baseline'>
           <Badge borderRadius='full' px='2' colorScheme='teal'>
-            Tag
+            New
           </Badge>
           <Box
             color='gray.500'

@@ -1,5 +1,8 @@
 import React from 'react';
 import MenuBar from '../components/MenuBar'
+import RestaurantSearchBar from '../components/RestaurantSearchBar';
+
+import { Center } from '@chakra-ui/react'
 
 class RestaurantDetailed extends React.Component {
 
@@ -13,7 +16,10 @@ class RestaurantDetailed extends React.Component {
       <div>
         {/* Define menu bar code here */}
         <MenuBar />
-        sldkjs
+        <RestaurantSearchBar />
+        <Center m={10}>
+          {/* <AirbnbSearchResults /> */}
+        </Center>
       </div>
     )
   }

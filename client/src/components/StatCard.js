@@ -28,7 +28,7 @@ export default function StatCard(props) {
     >
       <Image
         src={
-          'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
+          'https://res.cloudinary.com/maa/image/upload/c_lfill,g_auto,f_auto,q_auto:eco,h_1252,w_2160/v1/maac/-/media/images/metro-landing-page-heros/austin_tx.jpg'
         }
         layout={'fill'}
       />

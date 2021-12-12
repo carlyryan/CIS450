@@ -30,20 +30,23 @@ class SearchBar extends React.Component {
   }
   render() {
     return (
-      <Box m={3} >
-        <InputGroup size='md' >
-          <Input
-            pr='4.5rem'
-            placeholder='Search Airbnbs'
-            onChange={this.handleSearchQueryChange}
-          />
-          <InputRightElement width='4.5rem' p={2}>
-            <Button h='1.75rem' size='sm' onClick={this.handleSearch}>
-              Search
-            </Button>
-          </InputRightElement>
-        </InputGroup>
+      <Box>
+        <Box mx="20%" my={3}>
+          <InputGroup size='lg'>
+            <Input
+              pr='4.5rem'
+              placeholder='Search Airbnbs'
+              onChange={this.handleSearchQueryChange}
+            />
+            <InputRightElement width='4.5rem' p={2}>
+              <Button h='1.75rem' size='sm' onClick={this.handleSearch}>
+                Search
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+        </Box>
       </Box>
+
     )
   }
 }

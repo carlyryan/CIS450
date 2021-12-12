@@ -55,8 +55,8 @@ export default function MenuBar() {
             textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
             fontFamily={'heading'}
             color={useColorModeValue('gray.800', 'white')}
-            href="/">
-            Logo
+            href="/"><b>
+              Comfy<Text color={useColorModeValue('red.400', 'white')} display='inline'>Eats</Text></b>
           </Link>
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>

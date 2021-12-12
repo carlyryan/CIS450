@@ -97,3 +97,6 @@ upscale                           bool
 casual                            bool
 full_bar                          bool
 ```
+
+Yelp review
+```

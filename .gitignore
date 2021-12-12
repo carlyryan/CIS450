@@ -4,4 +4,3 @@ Pipfile.lock
 */config.json
 *.DS_Store
 .ipynb_checkpoints
-/client/public

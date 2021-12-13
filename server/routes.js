@@ -52,15 +52,12 @@ async function restaurants(req, res) {
   const name = req.query.name ? req.query.name : ""
 
 
-  query_string = `SELECT y.business_id, y.name, y.address, y.stars, y.postal_code, y.review_count FROM Yelp y JOIN YelpCategories c on y.business_id = c.business_id
+  query_string = `SELECT DISTINCT y.business_id, y.name, y.address, y.stars, y.postal_code, y.review_count FROM Yelp y JOIN YelpCategories c on y.business_id = c.business_id
     WHERE c.category LIKE '%${category}%' AND y.name LIKE '%${name}%'`
 
   if (req.query.stars) query_string = query_string.concat(` AND y.stars >= ${req.query.stars}`)
   if (req.query.reviewCount) query_string = query_string.concat(` AND y.review_count >= ${req.query.reviewCount}`)
   if (req.query.postal_code) query_string = query_string.concat(` AND y.postal_code == ${req.query.postal_code}`)
-
-  query_string = query_string.concat(` GROUP BY 1, 2, 3, 4, 5`)
-
   if (req.query.sort) query_string = query_string.concat(` ORDER BY y.${req.query.sort}`)
 
   connection.query(query_string, function (error, results, fields) {
@@ -146,6 +143,8 @@ async function restaurant_airbnbs(req, res) {
   if (req.query.review_count) query_string = query_string.concat(` and a.numer_of_reviews >= ${req.query.review_count}`)
   if (req.query.postal_code) query_string = query_string.concat(` and a.postal_code = ${req.query.postal_code}`)
 
+
+  // TODO: impopse a limit
   query_string = query_string.concat(` ORDER BY 1`)
   connection.query(query_string, function (error, results, fields) {
     if (error) {
@@ -217,7 +216,7 @@ async function airbnbs(req, res) {
   if (req.query.minimum_nights) query_string = query_string.concat(` AND a.minimum_nights <= ${req.query.minimum_nights}`)
   if (req.query.maximum_nights) query_string = query_string.concat(` AND a.maximum_nights >= ${req.query.maximum_nights}`)
   // postal code 
-  if (req.query.review_count) query_string = query_string.concat(` and a.numer_of_reviews >= ${req.query.review_count}`)
+  if (req.query.review_count) query_string = query_string.concat(` and a.number_of_reviews >= ${req.query.review_count}`)
   if (req.query.postal_code) query_string = query_string.concat(` and a.postal_code = ${req.query.postal_code}`)
 
   if (req.query.sort) query_string = query_string.concat(` ORDER BY a.${sort}`)

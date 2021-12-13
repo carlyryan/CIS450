@@ -245,23 +245,31 @@ const MobileNavItem = ({ label, children, href }) => {
 
 const NAV_ITEMS = [
   {
-    label: 'Airbnbs',
+    label: 'Airbnb Search',
     href: '/airbnbs',
     children: [
       {
-        label: 'Explore Sceney Airbnbs',
-        subLabel: 'Fitted by locations to your favorite places',
+        subLabel: 'Discover your favorite Airbnb.',
         href: '/airbnbs',
       }
     ],
   },
   {
-    label: 'Restaurants',
+    label: 'Restaurant Search',
     href: '/restaurants',
     children: [
       {
-        label: 'Discover Restaurants',
-        subLabel: 'Find the best restaurants to your need',
+        subLabel: 'Discover your favorite restaurant.',
+        href: '#',
+      }
+    ],
+  },
+  {
+    label: 'Restaurant Details',
+    href: '/restaurant',
+    children: [
+      {
+        subLabel: 'Take a closer look at your favorite restaurant.',
         href: '#',
       }
     ],

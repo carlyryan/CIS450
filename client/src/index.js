@@ -1,17 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import reportWebVitals from './reportWebVitals';
 
-import { ChakraProvider } from '@chakra-ui/react'
+import { 
+  ChakraProvider 
+} from '@chakra-ui/react'
+
 import HomePage from './pages/HomePage';
-import AirbnbSearch from './pages/AirbnbSearch'
-import RestaurantSearch from './pages/RestaurantSearch'
-import Statistics from './pages/Statistics'
 
+import AirbnbSearch from './pages/AirbnbSearch'
+
+import RestaurantDetails from "./pages/RestaurantDetails"
+import RestaurantSearch from './pages/RestaurantSearch'
+
+import Statistics from './pages/Statistics'
 
 import {
   BrowserRouter as Router,
-  Routes, Route
+  Routes, 
+  Route
 } from 'react-router-dom';
 
 
@@ -21,18 +27,36 @@ ReactDOM.render(
       <div>
         <Router>
           <Routes>
-            <Route exact
+            <Route 
+              exact
               path="/"
-              element={<HomePage />} />
-            <Route exact
+              element={<HomePage/>} 
+            />
+            <Route 
+              exact
               path="/airbnbs"
-              element={<AirbnbSearch />} />
-            <Route exact
+              element={<AirbnbSearch/>} 
+            />
+
+            {/* Restaurant Search */}
+            <Route 
+              exact
               path="/restaurants"
-              element={<RestaurantSearch />} />
-            <Route exact
+              element={<RestaurantSearch/>}
+            />
+
+            {/* Restaurant Details */}
+            <Route
+              exact
+              path="/restaurant"
+              element={<RestaurantDetails/>}
+            />
+
+            <Route 
+              exact
               path="/statistics"
-              element={<Statistics />} />
+              element={<Statistics/>}
+            />
           </Routes>
         </Router>
       </div>
@@ -40,8 +64,3 @@ ReactDOM.render(
   </ChakraProvider>,
   document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

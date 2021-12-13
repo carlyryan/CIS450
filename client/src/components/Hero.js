@@ -37,17 +37,12 @@ export default function Hero() {
                 bg: 'red.400',
                 zIndex: -1,
               }}>
-              Comfy Eats,
+              ComfyEats
             </Text>
             <br />
-            <Text as={'span'} color={'red.400'}>
-              find quality Airbnbs faster than ever!
-            </Text>
           </Heading>
           <Text color={'gray.500'}>
-            Our mission is to help food-loving individuals make a more informed decision about where they want to stay in Austin, TX.
-            Explore Airbnb's page to filter nearby airbnbs based on unique qualities such as surrounding restaurants and
-            neighborhood quality.
+            Our mission is to help you find an Airbnb that fits all of your food-loving needs. 
           </Text>
           <Stack
             spacing={{ base: 4, sm: 6 }}
@@ -62,9 +57,9 @@ export default function Hero() {
               colorScheme={'red'}
               bg={'red.400'}
               _hover={{ bg: 'red.500' }}>
-              Search Airbnbs!
+              Get Started
             </Button>
-            <Button
+            {/* <Button
               as={'a'}
               href={'#learn-more'}
               rounded={'full'}
@@ -73,7 +68,7 @@ export default function Hero() {
               px={6}
             >
               Learn more
-            </Button>
+            </Button> */}
           </Stack>
         </Stack>
         <Flex

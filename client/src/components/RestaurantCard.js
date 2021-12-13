@@ -1,10 +1,8 @@
-
 import {
   Box,
+  Button,
   Image,
-  Badge,
-  Stack,
-  Flex
+  Link
 } from '@chakra-ui/react'
 
 import {
@@ -14,82 +12,91 @@ import {
 import React from 'react'
 
 export default function RestaurantCard(props) {
-  const property = {
-    imageUrl: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-    imageAlt: 'Rear view of modern home with pool',
-    beds: 3,
-    baths: 2,
-    title: 'Modern home in city center in the heart of historic Los Angeles',
-    formattedPrice: '$1,900.00',
-    reviewCount: 34,
-    rating: 4,
+  const restaurant_properties = {
+    image_url: "https://static01.nyt.com/images/2016/09/28/us/17xp-pepethefrog_web1/28xp-pepefrog-articleLarge.jpg?quality=75&auto=webp&disable=upscale",
+    business_id: "",
+    name: "ABC",
+    address: "DEF",
+    postal_code: 11111,
+    stars: 3,
+    review_count: 0
   }
 
   return (
-    <Box
-      maxW={'600px'}
-      borderWidth='1px'
-      borderRadius='lg'
+    <div>
+    <Box 
+      mt='2'
+      maxW='300px'
+      borderWidth='1px' 
+      borderRadius='lg' 
       overflow='hidden'
-      boxShadow={'xl'}
-    >
-      <Flex>
-        <Box>
-          <Image
-            src={property.imageUrl}
-            alt={property.imageAlt}
-            h={'200px'}
-          />
+    >  
+      {/* Image */}
+      <Image 
+        src={restaurant_properties.image_url} 
+        alt="https://static01.nyt.com/images/2016/09/28/us/17xp-pepethefrog_web1/28xp-pepefrog-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+      />
+
+      {/* Restaurant Information */}
+      <Box 
+        p='6'
+      > 
+        {/* restaurant_properties.name */}
+        <Box
+          mt='1'
+          fontSize='xl'
+          fontWeight='semibold'
+          isTruncated
+          lineHeight='tight'
+        >
+          {restaurant_properties.name}
         </Box>
 
-        <Box pl={'6'} pr={'6'}>
-          <Box h={'6'}> </Box>
-          <Box display='flex' alignItems='baseline'>
-            <Badge borderRadius='full' px='2' colorScheme='teal'>
-              New
-            </Badge>
-            <Box
-              color='gray.500'
-              fontWeight='semibold'
-              letterSpacing='wide'
-              fontSize='xs'
-              textTransform='uppercase'
-              ml='2'
-            >
-              {property.beds} beds &bull; {property.baths} baths
-            </Box>
-          </Box>
-          <Box
-            mt='1'
-            fontWeight='semibold'
-            as='h4'
-            lineHeight='tight'
-          >
-            {property.title}
-          </Box>
+        {/* restaurant_properties.address */}
+        <Box
+          mt='1'
+          fontSize='xs'
+          isTruncated
+          lineHeight='tight'
+        >
+          {restaurant_properties.address}, Austin, TX, {restaurant_properties.postal_code}
+        </Box>
 
-          <Box>
-            {property.formattedPrice}
-            <Box as='span' color='gray.600' fontSize='sm'>
-              / wk
-            </Box>
-          </Box>
-
-          <Box display='flex' mt='2' alignItems='center'>
-            {Array(5)
+        {/* restaurant_properties.stars, restaurant_properties.review_count */}
+        <Box 
+          display='flex'
+          mt='2' 
+          alignItems='center'
+        >
+          {/* restaurant_properties.stars */}
+          {
+            Array(5)
               .fill('')
               .map((_, i) => (
                 <StarIcon
                   key={i}
-                  color={i < property.rating ? 'teal.500' : 'gray.300'}
+                  color={i < restaurant_properties.stars ? 'red.400' : 'gray.300'}
                 />
-              ))}
-            <Box as='span' ml='2' color='gray.600' fontSize='sm'>
-              {property.reviewCount} reviews
-            </Box>
+                )
+              )
+          }
+
+          {/* restaurant_properties.review_count */}
+          <Box as='span' ml='2' color='gray.600' fontSize='sm'>
+            {restaurant_properties.review_count} reviews
           </Box>
         </Box>
-      </Flex >
-    </Box >
-  )
+
+        {/* Link */}
+        <Button
+          as={'a'}
+          href={'http://localhost:3000/restaurant'}
+          mt='4'
+        >
+        View More
+        </Button>
+      </Box>
+    </Box>
+    </div>
+  );
 }

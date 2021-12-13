@@ -11,6 +11,8 @@ import {
 } from '@chakra-ui/react'
 
 import {
+	ArrowLeftIcon, 
+	ArrowRightIcon,
 	SearchIcon,
   	StarIcon
 } from '@chakra-ui/icons';
@@ -47,6 +49,7 @@ class RestaurantSearchComplex extends React.Component {
 		};
 
 		this.handleNextPageButtonClick = this.handleNextPageButtonClick.bind(this);
+		this.handlePrevPageButtonClick = this.handlePrevPageButtonClick.bind(this);
 		this.handleSearchButtonClick = this.handleSearchButtonClick.bind(this);
 
 		this.handleSearchCategoryChange = this.handleSearchCategoryChange.bind(this);
@@ -57,9 +60,14 @@ class RestaurantSearchComplex extends React.Component {
 	}
 
 	handleNextPageButtonClick() {
-		console.log("Clicked...");
 		this.setState(prevState => ({
 			page: Math.min(prevState.page + 1, prevState.numPages)
+		}));
+	}
+
+	handlePrevPageButtonClick() {
+		this.setState(prevState => ({
+			page: Math.max(prevState.page - 1, 1)
 		}));
 	}
 
@@ -133,7 +141,7 @@ class RestaurantSearchComplex extends React.Component {
 					{/* Search/Reset Button */}
 					<Button
 						backgroundColor={'white'}
-						color={'red.400'}
+						// color={'red.400'}
 						mt='2'
 						onClick={this.handleSearchButtonClick}
 						size='lg'
@@ -246,23 +254,47 @@ class RestaurantSearchComplex extends React.Component {
 						}
 					</Box>
 
-					{/* Next Page Button */}
-					{
-						this.state.searchIsClicked && this.state.page < this.state.numPages
-						? 
-							<Button
-								backgroundColor={'white'}
-								color={'red.400'}
-								mt='2'
-								onClick={this.handleNextPageButtonClick}
-								size='lg'
-								variant='outline'
-							>
-								Next Page
-							</Button>
-						: <></>
-					}
-					
+					<Box
+						display='flex'
+						mt='2'
+					>
+						{/* Previous Page Button */}
+						{
+							this.state.searchIsClicked && this.state.page > 1
+							? 
+								<Button
+									backgroundColor={'white'}
+									// color={'red.400'}
+									mt='2'
+									mr='2'
+									onClick={this.handlePrevPageButtonClick}
+									size='lg'
+									variant='outline'
+								>
+									<ArrowLeftIcon/>
+								</Button>
+							: <></>
+						}
+
+						{/* Next Page Button */}
+						{
+							this.state.searchIsClicked && this.state.page < this.state.numPages
+							? 
+								<Button
+									backgroundColor={'white'}
+									// color={'red.400'}
+									mt='2'
+									onClick={this.handleNextPageButtonClick}
+									size='lg'
+									variant='outline'
+								>
+									<ArrowRightIcon/>
+								</Button>
+							: <></>
+						}
+					</Box>
+
+					<br></br>
 
 				</VStack>
 			</div>

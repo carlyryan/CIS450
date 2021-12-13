@@ -105,6 +105,7 @@ class RestaurantCard extends React.Component {
                         <Button
                             as={'a'}
                             href={'http://localhost:3000/restaurant/' + (this.props.business_id ? this.props.business_id : this.defaultContent().business_id)}
+                            target="_blank"
                             mt='4'
                         >
                             View More

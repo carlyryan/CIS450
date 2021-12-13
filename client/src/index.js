@@ -48,7 +48,7 @@ ReactDOM.render(
             {/* Restaurant Details */}
             <Route
               exact
-              path="/restaurant"
+              path="/restaurant/:business_id"
               element={<RestaurantDetails/>}
             />
 

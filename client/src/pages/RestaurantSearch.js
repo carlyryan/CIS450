@@ -14,9 +14,6 @@ class RestaurantSearch extends React.Component {
       <div>
         <MenuBar/>
         <RestaurantSearchComplex/>
-        <Center>
-          <RestaurantCard/>
-        </Center>
       </div>
     )
   }

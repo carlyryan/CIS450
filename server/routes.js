@@ -48,28 +48,27 @@ Route Handler: restaurants(req, res)
 Return Parameters: {results [{business_id, name, stars, postal_code, review_count}]}
  */
 async function restaurants(req, res) {
-  const category = req.query.category ? req.query.category : ""
-  const name = req.query.name ? req.query.name : ""
+    const category = req.query.category ? req.query.category : ""
+    const name = req.query.name ? req.query.name : ""
 
 
-  query_string = `SELECT y.business_id, y.name, y.stars, y.postal_code, y.review_count FROM Yelp y JOIN YelpCategories c on y.business_id = c.business_id
-  WHERE c.category LIKE '%${category}%' AND y.name LIKE '%${name}%'`
-  
-  if (req.query.stars) query_string = query_string.concat(` AND y.stars >= ${req.query.stars}`)
-  if (req.query.reviewCount) query_string = query_string.concat(` AND y.review_count >= ${req.query.reviewCount}`)
-  if (req.query.postal_code) query_string = query_string.concat(` AND y.postal_code == ${req.query.postal_code}`)
+    query_string = `SELECT y.business_id, y.name, y.stars, y.postal_code, y.review_count FROM Yelp y JOIN YelpCategories c on y.business_id = c.business_id
+    WHERE c.category LIKE '%${category}%' AND y.name LIKE '%${name}%'`
 
-  query_string = query_string.concat(` GROUP BY 1, 2, 3, 4, 5`)
+    if (req.query.stars) query_string = query_string.concat(` AND y.stars >= ${req.query.stars}`)
+    if (req.query.reviewCount) query_string = query_string.concat(` AND y.review_count >= ${req.query.reviewCount}`)
+    if (req.query.postal_code) query_string = query_string.concat(` AND y.postal_code == ${req.query.postal_code}`)
 
-  if (req.query.sort) query_string = query_string.concat(` ORDER BY y.${req.query.sort}`)
+    query_string = query_string.concat(` GROUP BY 1, 2, 3, 4, 5`)
 
-  connection.query(query_string, function (error, results, fields) {
-      if (error) {
-        console.log(error)
-        res.json({ error: error })
-      } else if (results) {
-        res.json({ results: results })
-      }
+    if (req.query.sort) query_string = query_string.concat(` ORDER BY y.${req.query.sort}`)
+
+    connection.query(query_string, function (error, results, fields) {
+        if (error) {
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
     });
 }
 

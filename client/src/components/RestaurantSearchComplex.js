@@ -2,13 +2,10 @@ import React from 'react';
 
 import {
 	Button,
-	HStack,
 	Icon,
 	Input,
 	InputGroup,
 	InputLeftElement,
-	Radio,
-	RadioGroup,
 	VStack
 } from '@chakra-ui/react'
 
@@ -22,8 +19,15 @@ import {
 } from 'react-icons/ai'
 
 import {
-	BiCurrentLocation
+	BiCurrentLocation,
+	BiCategory
 } from 'react-icons/bi'
+
+import {
+	getRestaurants
+} from '../fetcher'
+
+import RestaurantCard from './RestaurantCard'
 
 class RestaurantSearchComplex extends React.Component {
 	constructor(props) {
@@ -31,13 +35,17 @@ class RestaurantSearchComplex extends React.Component {
 
 		this.state = {
 			searchIsClicked: false,
-			searchName: undefined,
-			searchPostalCode: undefined, 
-			searchReviewCount: undefined,
-			searchStars: undefined
+			searchCategory: "",
+			searchName:	"",
+			searchPostalCode: "", 
+			searchReviewCount: "",
+			searchStars: "",
+			results: []
 		};
 
 		this.handleSearchButtonClick = this.handleSearchButtonClick.bind(this);
+
+		this.handleSearchCategoryChange = this.handleSearchCategoryChange.bind(this);
 		this.handleSearchNameChange = this.handleSearchNameChange.bind(this);
 		this.handleSearchPostalCodeChange = this.handleSearchPostalCodeChange.bind(this);
 		this.handleSearchReviewCountChange = this.handleSearchReviewCountChange.bind(this);
@@ -51,18 +59,26 @@ class RestaurantSearchComplex extends React.Component {
 
 		if (this.state.searchIsClicked) {
 			this.setState(prevState => ({
-				searchName: undefined,
-				searchPostalCode: undefined,
-				searchReviewCount: undefined,
-				searchStars: undefined
+				searchCategory: "",
+				searchName: "",
+				searchPostalCode: "",
+				searchReviewCount: "",
+				searchStars: "",
+				results: []
 			}));
 		} else {
-			console.log("Searching...");
-			console.log("Filtering Name for: " + this.state.searchName);
-			console.log("Filtering Postal Code for: " + this.state.searchPostalCode);
-			console.log("Filtering Review Count for: " + this.state.searchReviewCount);
-			console.log("Filtering Stars for: " + this.state.searchStars);
+			getRestaurants(this.state.searchCategory, this.state.searchName, this.state.searchPostalCode, this.state.searchReviewCount, this.state.searchStars, "name").then(res => {
+				this.setState(prevState => ({
+					results: res.results
+				}));
+			});
 		}
+	}
+
+	handleSearchCategoryChange(e) {
+		this.setState(prevState => ({
+			searchCategory: e.target.value
+		}));
 	}
 
 	handleSearchNameChange(e) {
@@ -96,6 +112,7 @@ class RestaurantSearchComplex extends React.Component {
 					{/* Search/Reset Button */}
 					<Button
 						backgroundColor={'white'}
+						color={'red.400'}
 						mt='2'
 						onClick={this.handleSearchButtonClick}
 						size='lg'
@@ -104,18 +121,18 @@ class RestaurantSearchComplex extends React.Component {
 					{this.state.searchIsClicked ? 'Reset' : 'Search'}
 					</Button>
 
-					{/* Postal Code Filter */}
+					{/* Category Filter */} 
 					<InputGroup
 						maxW='300px'
 						mt='2'
 					>
 						<InputLeftElement
-							children={<Icon as={BiCurrentLocation} color={'red.400'}/>}
+							children={<Icon as={BiCategory} color={'red.400'}/>}
 						/>
 						<Input
-							placeholder={this.state.searchPostalCode ? "" : "Postal Code"}
-							value={this.state.searchPostalCode ? this.state.searchPostalCode : ""}
-							onChange={this.handleSearchPostalCodeChange}
+							placeholder={this.state.searchCategory ? "" : "Category"}
+							value={this.state.searchCategory ? this.state.searchCategory : ""}
+							onChange={this.handleSearchCategoryChange}
 							variant='outline'
 						/>
 					</InputGroup>
@@ -133,6 +150,22 @@ class RestaurantSearchComplex extends React.Component {
 							value={this.state.searchName ? this.state.searchName : ""}
 							onChange={this.handleSearchNameChange}
 							variant='outline' 
+						/>
+					</InputGroup>
+
+					{/* Postal Code Filter */}
+					<InputGroup
+						maxW='300px'
+						mt='2'
+					>
+						<InputLeftElement
+							children={<Icon as={BiCurrentLocation} color={'red.400'}/>}
+						/>
+						<Input
+							placeholder={this.state.searchPostalCode ? "" : "Postal Code"}
+							value={this.state.searchPostalCode ? this.state.searchPostalCode : ""}
+							onChange={this.handleSearchPostalCodeChange}
+							variant='outline'
 						/>
 					</InputGroup>
 
@@ -167,6 +200,22 @@ class RestaurantSearchComplex extends React.Component {
 							variant='outline' 
 						/>
 					</InputGroup>
+
+					{
+						this.state.searchIsClicked && this.state.results.length > 0
+						? 
+							<RestaurantCard
+								image_url="https://static01.nyt.com/images/2016/09/28/us/17xp-pepethefrog_web1/28xp-pepefrog-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+								business_id={this.state.results[0].business_id}
+								name={this.state.results[0].name}
+								address={"1616 Sylvan Ave"}
+								postal_code={this.state.results[0].postal_code}
+								stars={this.state.results[0].stars}
+								review_count={this.state.results[0].review_count}
+							/>
+						: <></>
+					}
+
 				</VStack>
 			</div>
 		);

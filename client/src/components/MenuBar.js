@@ -266,7 +266,7 @@ const NAV_ITEMS = [
   },
   {
     label: 'Restaurant Details',
-    href: '/restaurant',
+    href: '/restaurant/NRPemqVb4qpWFF0Avq_6OQ',
     children: [
       {
         subLabel: 'Take a closer look at your favorite restaurant.',

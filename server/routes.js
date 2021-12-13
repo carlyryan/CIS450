@@ -48,28 +48,28 @@ Route Handler: restaurants(req, res)
 Return Parameters: {results [{business_id, name, stars, postal_code, review_count}]}
  */
 async function restaurants(req, res) {
-    const category = req.query.category ? req.query.category : ""
-    const name = req.query.name ? req.query.name : ""
+  const category = req.query.category ? req.query.category : ""
+  const name = req.query.name ? req.query.name : ""
 
 
-    query_string = `SELECT y.business_id, y.name, y.stars, y.postal_code, y.review_count FROM Yelp y JOIN YelpCategories c on y.business_id = c.business_id
+  query_string = `SELECT y.business_id, y.name, y.stars, y.postal_code, y.review_count FROM Yelp y JOIN YelpCategories c on y.business_id = c.business_id
     WHERE c.category LIKE '%${category}%' AND y.name LIKE '%${name}%'`
 
-    if (req.query.stars) query_string = query_string.concat(` AND y.stars >= ${req.query.stars}`)
-    if (req.query.reviewCount) query_string = query_string.concat(` AND y.review_count >= ${req.query.reviewCount}`)
-    if (req.query.postal_code) query_string = query_string.concat(` AND y.postal_code == ${req.query.postal_code}`)
+  if (req.query.stars) query_string = query_string.concat(` AND y.stars >= ${req.query.stars}`)
+  if (req.query.reviewCount) query_string = query_string.concat(` AND y.review_count >= ${req.query.reviewCount}`)
+  if (req.query.postal_code) query_string = query_string.concat(` AND y.postal_code == ${req.query.postal_code}`)
 
-    query_string = query_string.concat(` GROUP BY 1, 2, 3, 4, 5`)
+  query_string = query_string.concat(` GROUP BY 1, 2, 3, 4, 5`)
 
-    if (req.query.sort) query_string = query_string.concat(` ORDER BY y.${req.query.sort}`)
+  if (req.query.sort) query_string = query_string.concat(` ORDER BY y.${req.query.sort}`)
 
-    connection.query(query_string, function (error, results, fields) {
-        if (error) {
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
-    });
+  connection.query(query_string, function (error, results, fields) {
+    if (error) {
+      res.json({ error: error })
+    } else if (results) {
+      res.json({ results: results })
+    }
+  });
 }
 
 // /restaurant/:business_id
@@ -206,7 +206,7 @@ async function airbnbs(req, res) {
   a.number_of_reviews, a.review_scores_rating, a.instant_bookable, bathrooms
   FROM Airbnb a join Host h on a.host_id = h.host_id
   WHERE a.room_type LIKE '%${room_type}%' AND a.instant_bookable LIKE '%${is_instant_bookable}%'`
-  
+
   //beds
   if (req.query.num_beds_lt) query_string = query_string.concat(` AND a.beds <= ${req.query.num_beds_lt}`)
   if (req.query.num_beds_gt) query_string = query_string.concat(` AND a.beds >= ${req.query.num_beds_gt}`)
@@ -216,21 +216,21 @@ async function airbnbs(req, res) {
   //min/max nights
   if (req.query.minimum_nights) query_string = query_string.concat(` AND a.minimum_nights <= ${req.query.minimum_nights}`)
   if (req.query.maximum_nights) query_string = query_string.concat(` AND a.maximum_nights >= ${req.query.maximum_nights}`)
-// postal code 
+  // postal code 
   if (req.query.review_count) query_string = query_string.concat(` and a.numer_of_reviews >= ${req.query.review_count}`)
   if (req.query.postal_code) query_string = query_string.concat(` and a.postal_code = ${req.query.postal_code}`)
 
   if (req.query.sort) query_string = query_string.concat(` ORDER BY a.${sort}`)
 
   //res.send(query_string)
-   connection.query(query_string, function (error, results, fields) {
-      if (error) {
-        console.log(error)
-        res.json({ error: error })
-      } else if (results) {
-        res.json({ results: results })
-      }
-    }); 
+  connection.query(query_string, function (error, results, fields) {
+    if (error) {
+      console.log(error)
+      res.json({ error: error })
+    } else if (results) {
+      res.json({ results: results })
+    }
+  });
 }
 
 // /airbnbs_by_yelp/
@@ -351,34 +351,36 @@ async function hosts_airbnb_list(req, res) {
 
 // TODO: extend based on specification (add filters, additional criterion)
 async function restaurant_zip(req, res) {
-  if (req.query.postal && !isNaN(req.query.postal)) {
-    connection.query(`SELECT postal_code, AVG(RestaurantsPriceRange2) as avg_price
-    FROM Yelp
-    WHERE postal_code = '${req.query.postal}'
-    ORDER BY avg_price`, function (error, results, fields) {
-
-      if (error) {
-        console.log(error)
-        res.json({ error: error })
-      } else if (results) {
-        res.json({ results: results })
-      }
-    });
+  // check for query filters
+  var filters = ['TRUE']
+  if (req.query.category) {
+    filters.push(`YC.category='${req.query.category}'`);
   }
-  else {
-    connection.query(`SELECT postal_code, AVG(RestaurantsPriceRange2) as avg_price
-    FROM Yelp
-    GROUP BY postal_code
-    ORDER BY avg_price`, function (error, results, fields) {
-
-      if (error) {
-        console.log(error)
-        res.json({ error: error })
-      } else if (results) {
-        res.json({ results: results })
-      }
-    });
+  if (req.query.stars) {
+    filters.push(`Y.stars>=${req.query.stars}`);
   }
+  if (req.query.review_count) {
+    filters.push(`Y.review_count>=${req.query.review_count}`);
+  }
+
+  where_clause = filters.join(' AND ')
+
+  query_string = `
+  SELECT postal_code, COUNT(DISTINCT Y.business_id) as criterion
+  FROM Yelp Y JOIN YelpReviews YR on Y.business_id = YR.business_id
+            JOIN YelpCategories YC on Y.business_id = YC.business_id
+  WHERE ${where_clause}
+  GROUP BY postal_code
+  ORDER BY criterion DESC;`
+
+  connection.query(query_string, function (error, results, fields) {
+    if (error) {
+      console.log(error)
+      res.json({ error: error })
+    } else if (results) {
+      res.json({ results: results })
+    }
+  });
 }
 
 // /airbnb_zip/
@@ -389,7 +391,35 @@ async function restaurant_zip(req, res) {
 // Superhost_Hosted*
 // Criterion: [count, avg_price, review_count]
 async function airbnb_zip(req, res) {
+  // check for query filters
+  var filters = ['TRUE']
+  if (req.query.superhost) {
+    filters.push(`H.host_is_superhost = 'TRUE'`);
+  }
+  if (req.query.rating) {
+    filters.push(`A.review_scores_rating>=${req.query.rating}`);
+  }
+  if (req.query.review_count) {
+    filters.push(`A.number_of_reviews>=${req.query.review_count}`);
+  }
 
+  where_clause = filters.join(' AND ')
+
+  query_string = `
+  SELECT postal_code, COUNT(*) as criterion
+  FROM Airbnb A JOIN Host H on H.host_id = A.host_id
+  WHERE ${where_clause}
+  GROUP BY postal_code
+  ORDER BY criterion DESC;`
+
+  connection.query(query_string, function (error, results, fields) {
+    if (error) {
+      console.log(error)
+      res.json({ error: error })
+    } else if (results) {
+      res.json({ results: results })
+    }
+  });
 }
 
 

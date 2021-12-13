@@ -43,6 +43,10 @@ import {
   ImHipster
 } from 'react-icons/im'
 
+import {
+    getRestaurant
+} from '../fetcher.js'
+
 import React from 'react'
 
 class RestaurantCardDetailed extends React.Component {
@@ -85,10 +89,6 @@ class RestaurantCardDetailed extends React.Component {
         casual: 1,
         full_bar: 1 
     };
-  }
-
-  componentDidMount() {
-    
   }
 
   render() {

@@ -111,10 +111,52 @@ async function restaurant(req, res) {
 
 
 // /restaurant_airbnbs/:business_id
-// Description: Gets airbnbs around a specific yelp, sorted by distance, based on certain filters
+// Description: Gets airbnbs around a specific yelp, sorted by distance, any filter that can be passed into the airbnb search can also be passed in here, the most pertinent filter though is max_miles, which defaults to 1.5
 // Route Parameters:  (Filters)
-// (Same as airbnbs route)
+// Query parameters: 
+//       max_miles
+// Return Parameters: [result {​​id, listing_url, name, description,
+//        neighborhood_overview, picture_url, host_id
+//        postal_code, latitude,
+//        longitude, property_type, room_type, accommodates,
+//        bathrooms_details, bedrooms, beds, amenities, price,
+// minimum_nights, maximum_nights, number_of_reviews, review_scores_rating, instant_bookable, bathrooms}]
 async function restaurant_airbnbs(req, res) {
+  business_id = req.params.business_id;
+  const max_miles = req.query.max_miles ? req.query.max_miles : 1.5
+  const room_type = req.query.room_type ? req.query.room_type : ""
+  const is_instant_bookable = req.query.is_instant_bookable ? 'TRUE' : ""
+
+  query_string = `SELECT ST_Distance_Sphere(point(y.longitude, y.latitude), point(a.longitude, a.latitude)) * .000621371192 as distance_miles, id, a.listing_url, a.name, a.description, a.neighborhood_overview, a.picture_url, a.host_id, 
+  a.postal_code, a.latitude, a.longitude, a.property_type, a.room_type, 
+  a.accommodates, a.bathrooms_details, a.bedrooms, a.beds, a.amenities, a.price, a.minimum_nights, a.maximum_nights, 
+  a.number_of_reviews, a.review_scores_rating, a.instant_bookable, bathrooms
+  FROM Airbnb a join Yelp y on ST_Distance_Sphere(point(y.longitude, y.latitude), point(a.longitude, a.latitude)) * .000621371192 < ${max_miles}
+  WHERE y.business_id LIKE '%${business_id}%' and a.room_type LIKE '%${room_type}%' AND a.instant_bookable LIKE '%${is_instant_bookable}%'`
+
+  //beds
+  if (req.query.num_beds_lt) query_string = query_string.concat(` AND a.beds <= ${req.query.num_beds_lt}`)
+  if (req.query.num_beds_gt) query_string = query_string.concat(` AND a.beds >= ${req.query.num_beds_gt}`)
+  //stars
+  if (req.query.stars_lt) query_string = query_string.concat(` AND a.review_scores_rating <= ${req.query.stars_lt}`)
+  if (req.query.stars_gt) query_string = query_string.concat(` AND a.review_scores_rating >= ${req.query.stars_gt}`)
+  //min/max nights
+  if (req.query.minimum_nights) query_string = query_string.concat(` AND a.minimum_nights <= ${req.query.minimum_nights}`)
+  if (req.query.maximum_nights) query_string = query_string.concat(` AND a.maximum_nights >= ${req.query.maximum_nights}`)
+  // postal code 
+  if (req.query.review_count) query_string = query_string.concat(` and a.numer_of_reviews >= ${req.query.review_count}`)
+  if (req.query.postal_code) query_string = query_string.concat(` and a.postal_code = ${req.query.postal_code}`)
+
+  query_string = query_string.concat(` ORDER BY 1`)
+  connection.query(query_string, function (error, results, fields) {
+    if (error) {
+      console.log(error)
+      res.json({ error: error })
+    } else if (results) {
+      res.json({ results: results })
+    }
+  });
+
 }
 
 
@@ -194,12 +236,12 @@ async function airbnbs(req, res) {
 
 // /airbnbs_by_yelp/
 // Query Parameters: (In addition to those of /airbnbs)
-// near_cuisine*
-// nearby_restaurant_rating_ratio_lt*
-// nearby_restaurant_rating_ratio_rt*
-// postal_code*
-// restaurants_within_miles* (num miles)
-// Sort*
+//    near_cuisine*
+//    nearby_restaurant_rating_ratio_lt*
+//    nearby_restaurant_rating_ratio_rt*
+//    postal_code*
+//    restaurants_within_miles* (num miles)
+//    Sort*
 // Route Handler: airbnb_yelps(req, res)
 // Description: Filter data on Airbnbs based on qualities of nearby amenities such as avg restaurant rating or being close to a grocery store.
 // Return Parameters: [result {​​id, listing_url, name, description,
@@ -239,7 +281,6 @@ async function airbnb(req, res) {
       res.json({ results: results })
     }
   });
-
 }
 
 // /airbnb_hosts/:hostid
@@ -271,12 +312,31 @@ async function airbnb_hosts(req, res) {
 
 }
 
+// /hosts_airbnb_list/:hostid
+// Description: return airbnbs for a specific host 
+// Route Handler: hosts_airbnb_list(req, res)
+// Return Parameters: [result {id, name, listing_url, postal_code}]
+async function hosts_airbnb_list(req, res) {
+  hostid = req.params.hostid
+
+  query_string = `SELECT a.id, a.name, a.listing_url, a.postal_code
+  FROM Airbnb a join Host h on a.host_id = h.host_id
+  WHERE h.host_id LIKE '%${hostid}%'`
+
+  connection.query(query_string, function (error, results, fields) {
+    if (error) {
+      console.log(error)
+      res.json({ error: error })
+    } else if (results) {
+      res.json({ results: results })
+    }
+  });
+
+}
 
 // ********************************************
 //             ZIP CODE STUFF
 // ********************************************
-// ROUTE 3 -- This query finds the zipcodes sorted by average yelp price range
-// there is also the optional input of postal code to get the average price in that code
 
 // /restaurant_zip/
 // Description: Computes a criterion on codes based on yelps in the area; sort
@@ -542,6 +602,7 @@ module.exports = {
   airbnbs_by_yelp,
   airbnb,
   airbnb_hosts,
+  hosts_airbnb_list,
   restaurant_zip,
   airbnb_zip
 }

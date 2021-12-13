@@ -35,6 +35,7 @@ app.get('/airbnb/:listing_id', routes.airbnb)
 
 app.get('/airbnb_hosts/:hostid', routes.airbnb_hosts)
 
+app.get('/hosts_airbnb_list/:hostid', routes.hosts_airbnb_list)
 // ********************************************
 //             ZIP CODE STUFF
 // ********************************************

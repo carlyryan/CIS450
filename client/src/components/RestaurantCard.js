@@ -22,13 +22,13 @@ class RestaurantCard extends React.Component {
 
     defaultContent() {
         const default_content = {
-            image_url: "https://static01.nyt.com/images/2016/09/28/us/17xp-pepethefrog_web1/28xp-pepefrog-articleLarge.jpg?quality=75&auto=webp&disable=upscale",
-            business_id: "Xw8tuI30T-xihpzwBV-zJg",
-            name: "El Pollo Rey",
             address: "1725 E Riverside Dr",
+            business_id: "Xw8tuI30T-xihpzwBV-zJg",
+            image_url: "https://static01.nyt.com/images/2016/09/28/us/17xp-pepethefrog_web1/28xp-pepefrog-articleLarge.jpg?quality=75&auto=webp&disable=upscale",
+            name: "El Pollo Rey",
             postal_code: 78741,
-            stars: 5,
-            review_count: 11
+            review_count: 11,
+            stars: 5
         };
 
         return default_content;
@@ -47,7 +47,7 @@ class RestaurantCard extends React.Component {
 
                     {/* Image */}
                     <Image 
-                        src={"https://static01.nyt.com/images/2016/09/28/us/17xp-pepethefrog_web1/28xp-pepefrog-articleLarge.jpg?quality=75&auto=webp&disable=upscale"} 
+                        src={this.props.image_url ? this.props.image_url : this.defaultContent().image_url} 
                     />
 
                     {/* Restaurant Information */}
@@ -96,7 +96,12 @@ class RestaurantCard extends React.Component {
                             }
 
                             {/* this.props.review_count */}
-                            <Box as='span' ml='2' color='gray.600' fontSize='sm'>
+                            <Box 
+                                as='span' 
+                                color='gray.600' 
+                                fontSize='sm'
+                                ml='2' 
+                            >
                                 {this.props.review_count ? this.props.review_count : this.defaultContent().review_count} reviews
                             </Box>
                         </Box>

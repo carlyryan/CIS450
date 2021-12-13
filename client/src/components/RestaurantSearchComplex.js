@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+	Box,
 	Button,
 	Icon,
 	Input,
@@ -10,6 +11,8 @@ import {
 } from '@chakra-ui/react'
 
 import {
+	ArrowLeftIcon, 
+	ArrowRightIcon,
 	SearchIcon,
   	StarIcon
 } from '@chakra-ui/icons';
@@ -34,15 +37,19 @@ class RestaurantSearchComplex extends React.Component {
 		super(props);
 
 		this.state = {
+			numPages: 0,
+			page: 1, 
 			searchIsClicked: false,
 			searchCategory: "",
 			searchName:	"",
 			searchPostalCode: "", 
 			searchReviewCount: "",
 			searchStars: "",
-			results: []
+			results: [],
 		};
 
+		this.handleNextPageButtonClick = this.handleNextPageButtonClick.bind(this);
+		this.handlePrevPageButtonClick = this.handlePrevPageButtonClick.bind(this);
 		this.handleSearchButtonClick = this.handleSearchButtonClick.bind(this);
 
 		this.handleSearchCategoryChange = this.handleSearchCategoryChange.bind(this);
@@ -52,6 +59,18 @@ class RestaurantSearchComplex extends React.Component {
 		this.handleSearchStarsChange = this.handleSearchStarsChange.bind(this);
 	}
 
+	handleNextPageButtonClick() {
+		this.setState(prevState => ({
+			page: Math.min(prevState.page + 1, prevState.numPages)
+		}));
+	}
+
+	handlePrevPageButtonClick() {
+		this.setState(prevState => ({
+			page: Math.max(prevState.page - 1, 1)
+		}));
+	}
+
 	handleSearchButtonClick() {
 		this.setState(prevState => ({
 			searchIsClicked: !prevState.searchIsClicked
@@ -59,6 +78,8 @@ class RestaurantSearchComplex extends React.Component {
 
 		if (this.state.searchIsClicked) {
 			this.setState(prevState => ({
+				numPages: 0,
+				page: 1,
 				searchCategory: "",
 				searchName: "",
 				searchPostalCode: "",
@@ -68,9 +89,17 @@ class RestaurantSearchComplex extends React.Component {
 			}));
 		} else {
 			getRestaurants(this.state.searchCategory, this.state.searchName, this.state.searchPostalCode, this.state.searchReviewCount, this.state.searchStars, "name").then(res => {
-				this.setState(prevState => ({
-					results: res.results
-				}));
+				this.setState(
+					{
+						results: res.results,
+						numPages: res.results.length <= 3 ? 1 : Math.ceil(res.results.length / 3)
+					},
+					() => {
+						console.log("Done setting the state");
+						console.log("length: " + this.state.results.length);
+						console.log("numPages: " + this.state.numPages);
+					}
+				);
 			});
 		}
 	}
@@ -112,13 +141,13 @@ class RestaurantSearchComplex extends React.Component {
 					{/* Search/Reset Button */}
 					<Button
 						backgroundColor={'white'}
-						color={'red.400'}
+						// color={'red.400'}
 						mt='2'
 						onClick={this.handleSearchButtonClick}
 						size='lg'
 						variant='outline'
 					>
-					{this.state.searchIsClicked ? 'Reset' : 'Search'}
+						{this.state.searchIsClicked ? 'Reset' : 'Search'}
 					</Button>
 
 					{/* Category Filter */} 
@@ -201,20 +230,71 @@ class RestaurantSearchComplex extends React.Component {
 						/>
 					</InputGroup>
 
-					{
-						this.state.searchIsClicked && this.state.results.length > 0
-						? 
-							<RestaurantCard
-								image_url="https://static01.nyt.com/images/2016/09/28/us/17xp-pepethefrog_web1/28xp-pepefrog-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
-								business_id={this.state.results[0].business_id}
-								name={this.state.results[0].name}
-								address={"1616 Sylvan Ave"}
-								postal_code={this.state.results[0].postal_code}
-								stars={this.state.results[0].stars}
-								review_count={this.state.results[0].review_count}
-							/>
-						: <></>
-					}
+					{/* Results */}
+					<Box
+						display='flex'
+						mt='2'
+					>
+						{
+							this.state.searchIsClicked && this.state.results.length > 0
+							? 
+								Array(this.state.page == this.state.numPages ? (this.state.results.length <= 3 ? this.state.results.length : this.state.results.length % 3) : 3)
+									.fill('')
+									.map((_, i) => (
+										<RestaurantCard
+											address={this.state.results[(this.state.page - 1) * 3 + i].address}
+											business_id={this.state.results[(this.state.page - 1) * 3 + i].business_id}
+											name={this.state.results[(this.state.page - 1) * 3 + i].name}
+											postal_code={this.state.results[(this.state.page - 1) * 3 + i].postal_code}
+											stars={this.state.results[(this.state.page - 1) * 3 + i].stars}
+											review_count={this.state.results[(this.state.page - 1) * 3 + i].review_count}
+										/>
+										))
+							: <></>
+						}
+					</Box>
+
+					<Box
+						display='flex'
+						mt='2'
+					>
+						{/* Previous Page Button */}
+						{
+							this.state.searchIsClicked && this.state.page > 1
+							? 
+								<Button
+									backgroundColor={'white'}
+									// color={'red.400'}
+									mt='2'
+									mr='2'
+									onClick={this.handlePrevPageButtonClick}
+									size='lg'
+									variant='outline'
+								>
+									<ArrowLeftIcon/>
+								</Button>
+							: <></>
+						}
+
+						{/* Next Page Button */}
+						{
+							this.state.searchIsClicked && this.state.page < this.state.numPages
+							? 
+								<Button
+									backgroundColor={'white'}
+									// color={'red.400'}
+									mt='2'
+									onClick={this.handleNextPageButtonClick}
+									size='lg'
+									variant='outline'
+								>
+									<ArrowRightIcon/>
+								</Button>
+							: <></>
+						}
+					</Box>
+
+					<br></br>
 
 				</VStack>
 			</div>

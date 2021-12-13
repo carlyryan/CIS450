@@ -45,14 +45,14 @@ Query Parameters:
   is_open*
   sort*
 Route Handler: restaurants(req, res)
-Return Parameters: {results [{business_id, name, stars, postal_code, review_count}]}
+Return Parameters: {results [{business_id, name, address, stars, postal_code, review_count}]}
  */
 async function restaurants(req, res) {
   const category = req.query.category ? req.query.category : ""
   const name = req.query.name ? req.query.name : ""
 
 
-  query_string = `SELECT DISTINCT y.business_id, y.name, y.stars, y.postal_code, y.review_count FROM Yelp y JOIN YelpCategories c on y.business_id = c.business_id
+  query_string = `SELECT DISTINCT y.business_id, y.name, y.address, y.stars, y.postal_code, y.review_count FROM Yelp y JOIN YelpCategories c on y.business_id = c.business_id
     WHERE c.category LIKE '%${category}%' AND y.name LIKE '%${name}%'`
 
   if (req.query.stars) query_string = query_string.concat(` AND y.stars >= ${req.query.stars}`)

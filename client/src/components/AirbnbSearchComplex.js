@@ -115,7 +115,13 @@ class AirbnbSearchComplex extends React.Component {
 				this.state.min_restaurant_count,
 				this.state.nearby_restaurant_avg_rating_lt,
 				this.state.nearby_restaurant_avg_rating_rt,
-				this.state.sort)
+				this.state.sort).then((res) => {
+					console.log(res);
+					this.setState({
+						results: res.results,
+						numPages: res.results.length <= this.state.pagesize ? 1 : Math.ceil(res.results.length / this.state.pagesize)
+					})
+				});
 		} else {
 			getAirbnbsSimple(
 				this.state.num_beds_lt,
@@ -227,21 +233,6 @@ class AirbnbSearchComplex extends React.Component {
 		return (
 			<div>
 				<VStack>
-					{/* Search by name */}
-					<InputGroup
-						maxW='300px'
-						m='2'
-					>
-						<InputLeftElement
-							children={<SearchIcon color={'red.400'} />}
-						/>
-						<Input
-							placeholder="Name"
-							variant='outline'
-						/>
-
-					</InputGroup>
-
 					{/* Postal Code Filter */}
 					<InputGroup
 						maxW='300px'

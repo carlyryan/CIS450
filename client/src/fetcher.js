@@ -114,11 +114,24 @@ const getZipCodeInfo = async (superhost) => {
 	return [r1, r2, r3];
 }
 
+
+const getCheapestPostal = async () => {
+	var res = await fetch(`http://${config.server_host}:${config.server_port}/cheapest_postal_code`);
+	return res.json();
+}
+
+const getMostPopularMexicanRestaurant = async () => {
+	var res = await fetch(`http://${config.server_host}:${config.server_port}/category_most_common_with_category/Mexican`);
+	return res.json();
+}
+
 export {
 	getRestaurant,
 	getRestaurants,
 	getAirbnbsSimple,
 	getAirbnbsComplex,
 	getAirbnb,
-	getZipCodeInfo
+	getZipCodeInfo,
+	getCheapestPostal,
+	getMostPopularMexicanRestaurant
 }

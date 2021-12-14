@@ -46,10 +46,10 @@ export default function StatCard(props) {
             color={useColorModeValue('gray.700', 'white')}
             fontSize={'2xl'}
             fontFamily={'body'}>
-            {(props.stat && props.stat.heading ? props.stat.heading : default_content.heading)}
+            {(props.heading ? props.heading : default_content.heading)}
           </Heading>
           <Text color={'gray.500'}>
-            {(props.stat && props.stat.body ? props.stat.body : default_content.body)}
+            {(props.body ? props.body : default_content.body)}
           </Text>
         </Stack>
 

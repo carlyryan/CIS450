@@ -1,11 +1,12 @@
 import {
+  Box,
+  Center,
+  Link,
   Table,
   Tbody,
   Tr,
   Td,
-  Image,
-  Box,
-  Center
+  Image
 } from '@chakra-ui/react'
 
 import {
@@ -29,12 +30,13 @@ class AirbnbCardDetailed extends React.Component {
 
   componentDidMount() {
     let url = window.location.href.split("/");
+    
     getAirbnb(url[url.length - 1]).then(res => {
       this.setState(prevState => ({
         res: res.results[0]
       }));
     }).catch((e) => {
-      console.log("Error fetching");
+      console.log(e);
     });
   }
 
@@ -55,8 +57,15 @@ class AirbnbCardDetailed extends React.Component {
               <Td>{this.state.res.name}</Td>
             </Tr>
             <Tr>
-              <Td>Listing Url</Td>
-              <Td>{this.state.res.listing_url}</Td>
+              <Td>Listing URL</Td>
+              <Td>
+                <Link
+                  href={this.state.res.listing_url}
+                  isExternal
+                >
+                  {this.state.res.listing_url}
+                </Link>
+              </Td>
             </Tr>
 
             <Tr>
@@ -65,13 +74,20 @@ class AirbnbCardDetailed extends React.Component {
             </Tr>
 
             <Tr>
-              <Td>Neighborhood Overview</Td>
+              <Td>Neighborhood</Td>
               <Td>{this.state.res.neighborhood_overview}</Td>
             </Tr>
 
             <Tr>
-              <Td>Picture Url</Td>
-              <Td>{this.state.res.picture_url}</Td>
+              <Td>Picture URL</Td>
+              <Td>
+                <Link
+                  href={this.state.res.picture_url}
+                  isExternal
+                >
+                  {this.state.res.picture_url}
+                </Link>
+              </Td>
             </Tr>
 
             <Tr>
@@ -115,13 +131,8 @@ class AirbnbCardDetailed extends React.Component {
             </Tr>
 
             <Tr>
-              <Td>Miniumum Nights</Td>
-              <Td>{this.state.res.minimum_nights}</Td>
-            </Tr>
-
-            <Tr>
-              <Td>Maximum Nights</Td>
-              <Td>{this.state.res.maximum_nights}</Td>
+              <Td>Nights</Td>
+              <Td>{this.state.res.minimum_nights}-{this.state.res.maximum_nights}</Td>
             </Tr>
 
             <Tr>

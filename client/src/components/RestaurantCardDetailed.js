@@ -67,6 +67,8 @@ class RestaurantCardDetailed extends React.Component {
             this.setState(prevState => ({
                 res: res.results[0]
             }));
+        }).catch((e) => {
+            console.log(e);
         });
     }
 

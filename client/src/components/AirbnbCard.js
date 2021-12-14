@@ -1,9 +1,7 @@
 import {
     Box,
     Button,
-    Icon,
-    Image,
-    Link
+    Image
 } from '@chakra-ui/react'
 
 import {
@@ -35,8 +33,6 @@ class AirbnbCard extends React.Component {
 
         return default_content;
     }
-
-
 
     render() {
         return (
@@ -134,7 +130,15 @@ class AirbnbCard extends React.Component {
                                 {this.props.review_count ? this.props.review_count : this.defaultContent().review_count} reviews
                             </Box>
                         </Box>
-                        <Button as={'a'} href={"/airbnb/" + this.props.listing_id} mt={4}>View more</Button>
+
+                        <Button
+                            as={'a'} 
+                            href={"/airbnb/" + this.props.listing_id} 
+                            mt={4}
+                            target="_blank"
+                        >
+                            View More
+                        </Button>
                     </Box>
                 </Box>
             </div>

@@ -46,9 +46,15 @@ class HomePage extends React.Component {
         <Hero />
 
         <Center >
-          <StatCard heading={`Austin's cheapest Airbnb's are in ${this.state.cheapest_zip}`} body={`Austin is known for it's cheap and afforable housing. But when taken into account with surrounding food prices of nearby restaurants, the ${this.state.cheapest_zip} zip code stands out with $${this.state.price_index} nightly stay.`} />
-          <StatCard heading={`Austin's most popular Mexican restaurant is ${this.state.category}`}
-            body={`Austin has a lot of diverse restaurant categories. But one thing it's particularly known for is it's Mexican food. Austin's most popular Mexican offering is ${this.state.category} with over ${this.state.category_num_results} joints all over the city.`} />
+          <StatCard 
+            heading={`Most Afforable Area`} 
+            body={`Austin, TX hasn't always been so expensive. The influx of industry giants like Apple, Google, and Tesla has ushered in a new era of prices. However, some neighborhoods have remained affordable. We used a combination of Airbnb and Yelp data to determine that ${this.state.cheapest_zip} is the place to be for those with a budget in mind.`}
+          />
+
+          <StatCard 
+            heading={`Most Popular Cuisine`}
+            body={`Austin, TX is known for having some of the most diverse food options in the country. With more than ${this.state.category_num_results} offerings across the city, ${this.state.category} sits at the top of the list.`}
+          />
         </Center>
       </div>
     );

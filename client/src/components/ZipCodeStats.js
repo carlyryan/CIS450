@@ -4,12 +4,9 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
-  Center,
   Heading,
   Checkbox
 } from '@chakra-ui/react'

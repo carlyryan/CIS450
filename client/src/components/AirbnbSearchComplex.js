@@ -3,36 +3,37 @@ import React from 'react';
 import {
 	Box,
 	Button,
+	HStack,
 	Icon,
 	Input,
 	InputGroup,
 	InputLeftElement,
 	VStack,
-	Center,
 	Checkbox
 } from '@chakra-ui/react'
 
 import {
 	ArrowLeftIcon,
 	ArrowRightIcon,
-	SearchIcon,
-	StarIcon,
+	SearchIcon
 } from '@chakra-ui/icons';
 
 import {
-	MdGraphicEq
-} from 'react-icons/md'
+	BiCurrentLocation,
+} from 'react-icons/bi'
 
 import {
-	BiCurrentLocation,
-	BiCategory
-} from 'react-icons/bi'
+	MdFastfood
+} from 'react-icons/md'
 
 import AirbnbCard from './AirbnbCard'
 import RangeSliderWithLabel from './RangeSliderWithLabel'
 import SliderWithLabel from './SliderWithLabel'
 
-import { getAirbnbsSimple, getAirbnbsComplex } from '../fetcher'
+import { 
+	getAirbnbsSimple, 
+	getAirbnbsComplex 
+} from '../fetcher'
 
 class AirbnbSearchComplex extends React.Component {
 	constructor(props) {
@@ -41,7 +42,7 @@ class AirbnbSearchComplex extends React.Component {
 		this.state = {
 			numPages: 0,
 			page: 1,
-			pagesize: 3,
+			pageSize: 3,
 			searchIsClicked: false,
 			num_beds_lt: 25,
 			num_beds_gt: 0,
@@ -88,18 +89,22 @@ class AirbnbSearchComplex extends React.Component {
 	}
 
 	handleSearchButtonClick() {
-		// condition to check if complex or simple
-		// this.setState({
-		// 	results: [],
-		// 	numPages: 0
-		// })
-		console.log(this.state);
+		if (this.state.searchIsClicked) {
+			this.setState({
+				numPages: 0,
+				page: 1,
+				results: []
+			});
+		}
+
 		if (this.state.near_cuisine !== ""
 			|| this.state.restaurants_within_miles !== 1.5
 			|| this.state.min_restaurant_count !== 0
 			|| this.state.nearby_restaurant_avg_rating_lt !== 0
 			|| this.state.nearby_restaurant_avg_rating_rt !== 5) {
-			getAirbnbsComplex(this.state.num_beds_lt,
+			
+			getAirbnbsComplex(
+				this.state.num_beds_lt,
 				this.state.num_beds_gt,
 				this.state.room_type,
 				this.state.stars_lt,
@@ -116,10 +121,9 @@ class AirbnbSearchComplex extends React.Component {
 				this.state.nearby_restaurant_avg_rating_lt,
 				this.state.nearby_restaurant_avg_rating_rt,
 				this.state.sort).then((res) => {
-					console.log(res);
 					this.setState({
 						results: res.results,
-						numPages: res.results.length <= this.state.pagesize ? 1 : Math.ceil(res.results.length / this.state.pagesize)
+						numPages: res.results.length <= this.state.pageSize ? 1 : Math.ceil(res.results.length / this.state.pageSize)
 					})
 				});
 		} else {
@@ -137,14 +141,17 @@ class AirbnbSearchComplex extends React.Component {
 				this.state.host_acceptance_rate_gt,
 				this.state.sort
 			).then((res) => {
-				console.log(res);
 				this.setState({
 					results: res.results,
-					numPages: res.results.length <= this.state.pagesize ? 1 : Math.ceil(res.results.length / this.state.pagesize)
+					numPages: res.results.length <= this.state.pageSize ? 1 : Math.ceil(res.results.length / this.state.pageSize)
 				})
 
 			})
 		}
+
+		this.setState(prevState => ({
+			searchIsClicked: !prevState.searchIsClicked
+		}));
 	}
 
 	handleNumBedsSlider(arr) {
@@ -152,9 +159,8 @@ class AirbnbSearchComplex extends React.Component {
 			num_beds_gt: arr[0],
 			num_beds_lt: arr[1]
 		})
-
-		console.log(this.state)
 	}
+
 	handleStarsSlider(arr) {
 		this.setState({
 			stars_gt: arr[0],
@@ -168,22 +174,25 @@ class AirbnbSearchComplex extends React.Component {
 			maximum_nights: arr[1]
 		})
 	}
+
 	handleReviewCount(val) {
 		this.setState({
 			review_count: val
 		})
 	}
+
 	handleRoomType(event) {
 		this.setState({
 			room_type: event.target.value
 		})
 	}
+
 	handleBookable(event) {
-		console.log(event.target.checked);
 		this.setState({
 			is_instant_bookable: event.target.checked
 		})
 	}
+
 	handlePostal(event) {
 		if (event === 0) {
 			this.setState({
@@ -228,98 +237,10 @@ class AirbnbSearchComplex extends React.Component {
 		}));
 	}
 
-
 	render() {
 		return (
 			<div>
 				<VStack>
-					{/* Postal Code Filter */}
-					<InputGroup
-						maxW='300px'
-						m='2'
-					>
-						<InputLeftElement
-							children={<Icon as={BiCurrentLocation} color={'red.400'} />}
-						/>
-						<Input
-							placeholder={"Postal Code"}
-							type='number'
-							onChange={this.handlePostal}
-							variant='outline'
-						/>
-					</InputGroup>
-					{/* Rooom Type */}
-					<InputGroup
-						maxW='300px'
-						m='2'
-					>
-						<InputLeftElement
-							children={<SearchIcon color={'red.400'} />}
-						/>
-						<Input
-							placeholder="Room type"
-							onChange={this.handleRoomType}
-							variant='outline'
-						/>
-
-					</InputGroup>
-
-					{/* Cuisine */}
-					<InputGroup
-						maxW='300px'
-						m='2'
-					>
-						<InputLeftElement
-							children={<Icon as={BiCurrentLocation} color={'red.400'} />}
-						/>
-						<Input
-							placeholder={"Near Cuisine Type? (e.g. chinese)"}
-							onChange={this.handleCuisine}
-							variant='outline'
-						/>
-					</InputGroup>
-
-					<Checkbox size='lg' colorScheme='red' defaultIsChecked onChange={this.handleBookable}>
-						Is Instantly Bookable?
-					</Checkbox>
-
-					<Center>
-						<RangeSliderWithLabel
-							title={"# Beds"}
-							onChangeEnd={this.handleNumBedsSlider} min={1} max={25} lower_default={1} upper_default={25} />
-
-						<RangeSliderWithLabel
-							title={"Stars"}
-							onChangeEnd={this.handleStarsSlider} min={0} max={5} lower_default={0} upper_default={5} />
-
-						<RangeSliderWithLabel
-							title={"# Nights"}
-							onChangeEnd={this.handleNightsSlider} min={0} max={100} lower_default={0} upper_default={100} />
-					</Center>
-
-					<Center>
-						<SliderWithLabel
-							title={"Minimum number of Reviews"}
-							onChangeEnd={this.handleReviewCount} min={0} max={100} upper_default={0}
-						/>
-						<SliderWithLabel
-							title={"Host Acceptance Rate (%)"}
-							onChangeEnd={this.handleHostAcceptanceRate} min={0} max={100} upper_default={0} />
-					</Center>
-
-					<Center>
-						<RangeSliderWithLabel
-							title={"Avg Stars for Nearby Restaurants"}
-							onChangeEnd={this.handleNearbyRestaurantRatio} min={0} max={5} lower_default={0} upper_default={5} />
-						<SliderWithLabel
-							title={"Restaurants within"}
-							onChangeEnd={this.handleRestaurantMiles} min={0} max={50} upper_default={1.5} />
-
-						<SliderWithLabel
-							title={"Minimum restaurants nearby"}
-							onChangeEnd={this.handleMinCount} min={0} max={10} upper_default={0} />
-					</Center>
-
 					{/* Search/Reset Button */}
 					<Button
 						backgroundColor={'white'}
@@ -332,33 +253,171 @@ class AirbnbSearchComplex extends React.Component {
 						{this.state.searchIsClicked ? 'Reset' : 'Search'}
 					</Button>
 
+					{/* Postal Code Filter */}
+					<InputGroup
+						maxW='300px'
+						mt='2'
+					>
+						<InputLeftElement
+							children={<Icon as={BiCurrentLocation} color={'red.400'} />}
+						/>
+						<Input
+							placeholder={"Postal Code"}
+							type='number'
+							onChange={this.handlePostal}
+							variant='outline'
+						/>
+					</InputGroup>
+
+					{/* Room Type */}
+					<InputGroup
+						maxW='300px'
+						mt='2'
+					>
+						<InputLeftElement
+							children={<SearchIcon color={'red.400'} />}
+						/>
+						<Input
+							placeholder="Room Type"
+							onChange={this.handleRoomType}
+							variant='outline'
+						/>
+
+					</InputGroup>
+
+					{/* Cuisine */}
+					<InputGroup
+						maxW='300px'
+						m='2'
+					>
+						<InputLeftElement
+							children={<Icon as={MdFastfood} color={'red.400'} />}
+						/>
+						<Input
+							placeholder={"Nearby Cuisine Type"}
+							onChange={this.handleCuisine}
+							variant='outline'
+						/>
+					</InputGroup>
+
+					<br
+						style={{"line-height":'1px'}}
+					></br>
+
+					{/* Instantly Bookable Checkbox */}
+					<Checkbox
+						colorScheme='red' 
+						defaultIsChecked 
+						onChange={this.handleBookable}
+						size='lg'
+					>
+						Instantly Bookable
+					</Checkbox>
+
+					<VStack>
+						<HStack>
+							<RangeSliderWithLabel
+								title={"Beds"}
+								onChangeEnd={this.handleNumBedsSlider}
+								min={1} 
+								max={25} 
+								lower_default={1} 
+								upper_default={25}
+							/>
+
+							<RangeSliderWithLabel
+								title={"Stars"}
+								onChangeEnd={this.handleStarsSlider} 
+								min={0} 
+								max={5} 
+								lower_default={0} 
+								upper_default={5}
+							/>
+						</HStack>
+
+						<HStack>
+							<RangeSliderWithLabel
+								title={"Nights"}
+								onChangeEnd={this.handleNightsSlider}
+								min={0} 
+								max={100} 
+								lower_default={0} 
+								upper_default={100} 
+							/>
+
+							<SliderWithLabel
+								title={"Min. Number of Reviews"}
+								onChangeEnd={this.handleReviewCount}
+								min={0} 
+								max={100} 
+								upper_default={0}
+							/>
+						</HStack>
+
+						<HStack>
+							<SliderWithLabel
+								title={"Min. Host Acceptance Rate"}
+								onChangeEnd={this.handleHostAcceptanceRate}
+								min={0} 
+								max={100} 
+								upper_default={0}
+							/>
+
+							<RangeSliderWithLabel
+								title={"Avg. Stars for Nearby Restaurants"}
+								onChangeEnd={this.handleNearbyRestaurantRatio}
+								min={0}
+								max={5}
+								lower_default={0}
+								upper_default={5}
+							/>
+						</HStack>
+
+						<HStack>
+							<SliderWithLabel
+								title={"Restaurants Within"}
+								onChangeEnd={this.handleRestaurantMiles}
+								min={0}
+								max={50}
+								upper_default={1.5} 
+							/>
+
+							<SliderWithLabel
+								title={"Min. No. of Restaurants Nearby"}
+								onChangeEnd={this.handleMinCount}
+								min={0}
+								max={10}
+								upper_default={0} />
+						</HStack>
+					</VStack>
+
 					{/* Results */}
 					<Box
 						display='flex'
 						mt='2'
 					>
 						{
-							this.state.results.length > 0
+							this.state.searchIsClicked && this.state.results.length > 0
 								?
-								Array(this.state.page === this.state.numPages ?
-									(this.state.results.length <= this.state.pagesize ?
-										this.state.results.length :
-										this.state.results.length % this.state.pagesize) :
-									this.state.pagesize)
-									.fill('')
-									.map((_, i) => (
-										<AirbnbCard
-											key={this.state.results[(this.state.page - 1) * this.state.pagesize + i].id}
-											image_url={this.state.results[(this.state.page - 1) * this.state.pagesize + i].picture_url}
-											beds={this.state.results[(this.state.page - 1) * this.state.pagesize + i].beds}
-											baths={this.state.results[(this.state.page - 1) * this.state.pagesize + i].bathrooms}
-											title={this.state.results[(this.state.page - 1) * this.state.pagesize + i].name}
-											stars={this.state.results[(this.state.page - 1) * this.state.pagesize + i].review_scores_rating}
-											review_count={this.state.results[(this.state.page - 1) * this.state.pagesize + i].review_count}
-											formatted_price={this.state.results[(this.state.page - 1) * this.state.pagesize + i].price}
-											listing_id={this.state.results[(this.state.page - 1) * this.state.pagesize + i].id}
-										/>
-									))
+									Array(this.state.page === this.state.numPages ?
+										(this.state.results.length <= this.state.pageSize ?
+											this.state.results.length :
+											this.state.results.length % this.state.pageSize) :
+										this.state.pageSize)
+										.fill('')
+										.map((_, i) => (
+											<AirbnbCard
+												key={this.state.results[(this.state.page - 1) * this.state.pageSize + i].id}
+												image_url={this.state.results[(this.state.page - 1) * this.state.pageSize + i].picture_url}
+												beds={this.state.results[(this.state.page - 1) * this.state.pageSize + i].beds}
+												baths={this.state.results[(this.state.page - 1) * this.state.pageSize + i].bathrooms}
+												title={this.state.results[(this.state.page - 1) * this.state.pageSize + i].name}
+												stars={this.state.results[(this.state.page - 1) * this.state.pageSize + i].review_scores_rating}
+												review_count={this.state.results[(this.state.page - 1) * this.state.pageSize + i].review_count}
+												formatted_price={this.state.results[(this.state.page - 1) * this.state.pageSize + i].price}
+												listing_id={this.state.results[(this.state.page - 1) * this.state.pageSize + i].id}
+											/>
+										))
 								: <></>
 						}
 					</Box>
@@ -369,25 +428,25 @@ class AirbnbSearchComplex extends React.Component {
 					>
 						{/* Previous Page Button */}
 						{
-							this.state.page > 1
+							this.state.searchIsClicked && this.state.page > 1
 								?
-								<Button
-									backgroundColor={'white'}
-									// color={'red.400'}
-									mt='2'
-									mr='2'
-									onClick={this.handlePrevPageButtonClick}
-									size='lg'
-									variant='outline'
-								>
-									<ArrowLeftIcon />
-								</Button>
+									<Button
+										backgroundColor={'white'}
+										// color={'red.400'}
+										mt='2'
+										mr='2'
+										onClick={this.handlePrevPageButtonClick}
+										size='lg'
+										variant='outline'
+									>
+										<ArrowLeftIcon/>
+									</Button>
 								: <></>
 						}
 
 						{/* Next Page Button */}
 						{
-							this.state.page < this.state.numPages
+							this.state.searchIsClicked && this.state.page < this.state.numPages
 								?
 								<Button
 									backgroundColor={'white'}

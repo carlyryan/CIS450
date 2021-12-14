@@ -3,10 +3,13 @@ import React from 'react';
 import {
 	Box,
 	Button,
+	HStack,
 	Icon,
 	Input,
 	InputGroup,
 	InputLeftElement,
+	Radio,
+	RadioGroup,
 	VStack
 } from '@chakra-ui/react'
 
@@ -45,7 +48,8 @@ class RestaurantSearchComplex extends React.Component {
 			searchPostalCode: "",
 			searchReviewCount: "",
 			searchStars: "",
-			results: [],
+			sortBy: "name",
+			results: []
 		};
 
 		this.handleNextPageButtonClick = this.handleNextPageButtonClick.bind(this);
@@ -57,6 +61,7 @@ class RestaurantSearchComplex extends React.Component {
 		this.handleSearchPostalCodeChange = this.handleSearchPostalCodeChange.bind(this);
 		this.handleSearchReviewCountChange = this.handleSearchReviewCountChange.bind(this);
 		this.handleSearchStarsChange = this.handleSearchStarsChange.bind(this);
+		this.handleSortChange = this.handleSortChange.bind(this);
 	}
 
 	handleNextPageButtonClick() {
@@ -72,10 +77,6 @@ class RestaurantSearchComplex extends React.Component {
 	}
 
 	handleSearchButtonClick() {
-		this.setState(prevState => ({
-			searchIsClicked: !prevState.searchIsClicked
-		}));
-
 		if (this.state.searchIsClicked) {
 			this.setState(prevState => ({
 				numPages: 0,
@@ -85,25 +86,21 @@ class RestaurantSearchComplex extends React.Component {
 				searchPostalCode: "",
 				searchReviewCount: "",
 				searchStars: "",
+				sortBy: "name",
 				results: []
 			}));
 		} else {
-			getRestaurants(this.state.searchCategory, this.state.searchName, this.state.searchPostalCode, this.state.searchReviewCount, this.state.searchStars, "name").then(res => {
-				console.log(res);
-
-				this.setState(
-					{
-						results: res.results,
-						numPages: res.results.length <= 3 ? 1 : Math.ceil(res.results.length / 3)
-					},
-					() => {
-						console.log("Done setting the state");
-						console.log("length: " + this.state.results.length);
-						console.log("numPages: " + this.state.numPages);
-					}
-				);
+			getRestaurants(this.state.searchCategory, this.state.searchName, this.state.searchPostalCode, this.state.searchReviewCount, this.state.searchStars, this.state.sortBy).then(res => {
+				this.setState({
+					results: res.results,
+					numPages: res.results.length <= 3 ? 1 : Math.ceil(res.results.length / 3)
+				});
 			});
 		}
+
+		this.setState(prevState => ({
+			searchIsClicked: !prevState.searchIsClicked
+		}));
 	}
 
 	handleSearchCategoryChange(e) {
@@ -134,6 +131,12 @@ class RestaurantSearchComplex extends React.Component {
 		this.setState(prevState => ({
 			searchStars: e.target.value
 		}));
+	}
+
+	handleSortChange(e) {
+		this.setState({
+			sortBy: e
+		})
 	}
 
 	render() {
@@ -232,6 +235,45 @@ class RestaurantSearchComplex extends React.Component {
 						/>
 					</InputGroup>
 
+					<RadioGroup
+						onChange={this.handleSortChange}
+						value={this.state.sortBy}
+					>
+						<HStack>
+							<Box>
+								Sort by:
+							</Box>
+
+							<Radio
+								size='md'
+								value='name'
+							>
+								Name
+							</Radio>
+
+							<Radio 
+								size='md'
+								value='postal_code'
+							>
+								Postal Code
+							</Radio>
+
+							<Radio 
+								size='md'
+								value='review_count'
+							>
+								Review Count
+							</Radio>
+
+							<Radio
+								size='md'
+								value='stars'
+							>
+								Stars
+							</Radio>
+						</HStack>
+					</RadioGroup>
+
 					{/* Results */}
 					<Box
 						display='flex'
@@ -240,18 +282,18 @@ class RestaurantSearchComplex extends React.Component {
 						{
 							this.state.searchIsClicked && this.state.results.length > 0
 								?
-								Array(this.state.page == this.state.numPages ? (this.state.results.length <= 3 ? this.state.results.length : this.state.results.length % 3) : 3)
-									.fill('')
-									.map((_, i) => (
-										<RestaurantCard
-											address={this.state.results[(this.state.page - 1) * 3 + i].address}
-											business_id={this.state.results[(this.state.page - 1) * 3 + i].business_id}
-											name={this.state.results[(this.state.page - 1) * 3 + i].name}
-											postal_code={this.state.results[(this.state.page - 1) * 3 + i].postal_code}
-											stars={this.state.results[(this.state.page - 1) * 3 + i].stars}
-											review_count={this.state.results[(this.state.page - 1) * 3 + i].review_count}
-										/>
-									))
+									Array(this.state.page === this.state.numPages ? (this.state.results.length <= 3 ? this.state.results.length : this.state.results.length % 3) : 3)
+										.fill('')
+										.map((_, i) => (
+											<RestaurantCard
+												address={this.state.results[(this.state.page - 1) * 3 + i].address}
+												business_id={this.state.results[(this.state.page - 1) * 3 + i].business_id}
+												name={this.state.results[(this.state.page - 1) * 3 + i].name}
+												postal_code={this.state.results[(this.state.page - 1) * 3 + i].postal_code}
+												stars={this.state.results[(this.state.page - 1) * 3 + i].stars}
+												review_count={this.state.results[(this.state.page - 1) * 3 + i].review_count}
+											/>
+										))
 								: <></>
 						}
 					</Box>
@@ -282,16 +324,16 @@ class RestaurantSearchComplex extends React.Component {
 						{
 							this.state.searchIsClicked && this.state.page < this.state.numPages
 								?
-								<Button
-									backgroundColor={'white'}
-									// color={'red.400'}
-									mt='2'
-									onClick={this.handleNextPageButtonClick}
-									size='lg'
-									variant='outline'
-								>
-									<ArrowRightIcon />
-								</Button>
+									<Button
+										backgroundColor={'white'}
+										// color={'red.400'}
+										mt='2'
+										onClick={this.handleNextPageButtonClick}
+										size='lg'
+										variant='outline'
+									>
+										<ArrowRightIcon/>
+									</Button>
 								: <></>
 						}
 					</Box>

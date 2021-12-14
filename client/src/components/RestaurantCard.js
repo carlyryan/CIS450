@@ -1,8 +1,7 @@
 import {
   Box,
   Button,
-  Image,
-  Link
+  Image
 } from '@chakra-ui/react'
 
 import {

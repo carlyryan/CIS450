@@ -249,8 +249,8 @@ const NAV_ITEMS = [
     href: '/airbnbs',
     children: [
       {
-        label: 'Explore Sceney Airbnbs',
-        subLabel: 'Fitted by locations to your favorite places',
+        label: 'Explore Airbnbs',
+        subLabel: 'Use our advanced search to find an Airbnb that is just right for you',
         href: '/airbnbs',
       }
     ],
@@ -260,18 +260,8 @@ const NAV_ITEMS = [
     href: '/restaurants',
     children: [
       {
-        label: 'Discover Restaurants',
-        subLabel: 'Find the best restaurants to your need',
-        href: '#',
-      }
-    ],
-  },
-  {
-    label: 'Restaurant Details',
-    href: '/restaurant/NRPemqVb4qpWFF0Avq_6OQ',
-    children: [
-      {
-        subLabel: 'Take a closer look at your favorite restaurant.',
+        label: 'Explore restaurants',
+        subLabel: 'Discover your favorite restaurants',
         href: '#',
       }
     ],

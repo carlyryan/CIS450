@@ -49,6 +49,7 @@ app.get('/restaurant_zip/', routes.restaurant_zip)
 app.get('/airbnb_zip/', routes.airbnb_zip)
 
 app.get('/cheapest_postal_code/', routes.cheapest_postal_code)
+app.get('/category_most_common_with_category/:category', routes.category_most_common_with_category)
 
 
 

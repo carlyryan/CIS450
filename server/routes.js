@@ -552,6 +552,40 @@ WHERE a.avg_price * y.avg_price <= ALL (
   });
 }
 
+// Takes in a category, outputs category which appears most often
+// alongside it
+async function category_most_common_with_category(req, res) {
+  cat = req.params.category;
+  query_string = `WITH T1 as (
+        SELECT YC2.category as category,
+              COUNT(DISTINCT YC1.business_id) as count
+        FROM YelpCategories YC1
+                Join YelpCategories YC2
+                      ON YC1.business_id = YC2.business_id
+        WHERE YC1.category != YC2.category AND
+              YC1.category = '${cat}' AND
+              YC2.category != 'Restaurants' AND
+              YC2.category != 'Bars' AND
+              YC2.category != 'Food'
+        GROUP BY YC1.category, YC2.category
+    )
+    SELECT category, count
+    FROM T1
+    WHERE count >= ALL (
+        SELECT count FROM T1
+    );
+    `;
+
+  connection.query(query_string, function (error, results, fields) {
+    if (error) {
+      console.log(error)
+      res.json({ error: error })
+    } else if (results) {
+      res.json({ results: results })
+    }
+  });
+}
+
 
 
 
@@ -764,5 +798,6 @@ module.exports = {
   hosts_airbnb_list,
   restaurant_zip,
   airbnb_zip,
-  cheapest_postal_code
+  cheapest_postal_code,
+  category_most_common_with_category,
 }

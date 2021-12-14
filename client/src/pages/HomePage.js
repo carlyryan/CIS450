@@ -6,12 +6,11 @@ import Hero from '../components/Hero'
 
 import StatCard from '../components/StatCard'
 
-import { 
-  Center 
+import {
+  Center
 } from '@chakra-ui/react'
 
 class HomePage extends React.Component {
-
   render() {
     return (
       <div>

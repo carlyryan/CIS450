@@ -509,6 +509,49 @@ async function airbnb_zip(req, res) {
   });
 }
 
+// ********************************************
+//                  COOL STATS 
+// ********************************************
+
+// postal code with cheapest 'price_index' (product of average BNB and average Yelp)
+async function cheapest_postal_code(req, res) {
+  query_string = `WITH abnb_avg as (
+    SELECT postal_code,
+           AVG(price/beds) as avg_price,
+           COUNT(DISTINCT id) as count
+    FROM Airbnb
+    WHERE review_scores_rating > 4
+    GROUP BY postal_code
+    HAVING count > 10
+), yelp_avg as (
+    SELECT postal_code,
+           AVG(Yelp.restaurants_price_range2) as avg_price,
+           COUNT(DISTINCT business_id) as count
+    FROM Yelp
+    WHERE stars >= 3
+    GROUP BY postal_code
+    HAVING count > 20
+)
+SELECT a.postal_code, (a.avg_price * y.avg_price) as price_index
+FROM abnb_avg a JOIN yelp_avg y ON
+    a.postal_code = y.postal_code
+WHERE a.avg_price * y.avg_price <= ALL (
+    SELECT a.avg_price * y.avg_price
+    FROM abnb_avg a JOIN yelp_avg y ON
+        a.postal_code = y.postal_code
+);
+`
+
+  connection.query(query_string, function (error, results, fields) {
+    if (error) {
+      console.log(error)
+      res.json({ error: error })
+    } else if (results) {
+      res.json({ results: results })
+    }
+  });
+}
+
 
 
 
@@ -720,5 +763,6 @@ module.exports = {
   airbnb_hosts,
   hosts_airbnb_list,
   restaurant_zip,
-  airbnb_zip
+  airbnb_zip,
+  cheapest_postal_code
 }

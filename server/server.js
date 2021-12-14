@@ -48,6 +48,8 @@ app.get('/restaurant_zip/', routes.restaurant_zip)
 
 app.get('/airbnb_zip/', routes.airbnb_zip)
 
+app.get('/cheapest_postal_code/', routes.cheapest_postal_code)
+
 
 
 app.listen(config.server_port, () => {

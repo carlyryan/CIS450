@@ -467,10 +467,19 @@ async function airbnb_zip(req, res) {
     filters.push(`A.number_of_reviews>=${req.query.review_count}`);
   }
 
+  // check criterion
+  agg_string = 'COUNT(*) as criterion'
+  if (req.query.criterion == 'avg_rating') {
+    agg_string = 'AVG(A.review_scores_rating) as criterion';
+  } else if (req.query.criterion == 'avg_price') {
+    agg_string = 'AVG(A.price) as criterion';
+  }
+
+
   where_clause = filters.join(' AND ')
 
   query_string = `
-  SELECT postal_code, COUNT(*) as criterion
+  SELECT postal_code, ${agg_string}
   FROM Airbnb A JOIN Host H on H.host_id = A.host_id
   WHERE ${where_clause}
   GROUP BY postal_code

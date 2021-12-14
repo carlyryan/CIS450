@@ -2,6 +2,10 @@ const config = require('./config.json')
 const mysql = require('mysql');
 const e = require('express');
 
+// TODOS
+// TODO: add pagination (LIMIT, OFFSET)
+// TODO: reduce number of fields returned by airbnbs_by_yelp 
+
 // LINK to specification:
 // https://docs.google.com/document/d/1BYqQRYXODskvQFh68G1cgsV5tdOPAJOa6QkkvhhIkwM/edit?usp=sharing
 
@@ -174,25 +178,25 @@ async function restaurants_by_review(req, res) {
 
 // helper function to generate Airbnb query's where clause
 function query_to_airbnb_where(query) {
-    const room_type = query.room_type ? query.room_type : ""
-    const is_instant_bookable = query.is_instant_bookable ? 'TRUE' : ""
+  const room_type = query.room_type ? query.room_type : ""
+  const is_instant_bookable = query.is_instant_bookable ? 'TRUE' : ""
 
-    where_clause =  `a.room_type LIKE '%${room_type}%' AND a.instant_bookable LIKE '%${is_instant_bookable}%'`
+  where_clause = `a.room_type LIKE '%${room_type}%' AND a.instant_bookable LIKE '%${is_instant_bookable}%'`
 
-    //beds
-    if (query.num_beds_lt) where_clause = where_clause.concat(` AND a.beds <= ${query.num_beds_lt}`)
-    if (query.num_beds_gt) where_clause = where_clause.concat(` AND a.beds >= ${query.num_beds_gt}`)
-    //stars
-    if (query.stars_lt) where_clause = where_clause.concat(` AND a.review_scores_rating <= ${query.stars_lt}`)
-    if (query.stars_gt) where_clause = where_clause.concat(` AND a.review_scores_rating >= ${query.stars_gt}`)
-    //min/max nights
-    if (query.minimum_nights) where_clause = where_clause.concat(` AND a.minimum_nights <= ${query.minimum_nights}`)
-    if (query.maximum_nights) where_clause = where_clause.concat(` AND a.maximum_nights >= ${query.maximum_nights}`)
-    // postal code 
-    if (query.review_count) where_clause = where_clause.concat(` and a.number_of_reviews >= ${query.review_count}`)
-    if (query.postal_code) where_clause = where_clause.concat(` and a.postal_code = ${query.postal_code}`)
+  //beds
+  if (query.num_beds_lt) where_clause = where_clause.concat(` AND a.beds <= ${query.num_beds_lt}`)
+  if (query.num_beds_gt) where_clause = where_clause.concat(` AND a.beds >= ${query.num_beds_gt}`)
+  //stars
+  if (query.stars_lt) where_clause = where_clause.concat(` AND a.review_scores_rating <= ${query.stars_lt}`)
+  if (query.stars_gt) where_clause = where_clause.concat(` AND a.review_scores_rating >= ${query.stars_gt}`)
+  //min/max nights
+  if (query.minimum_nights) where_clause = where_clause.concat(` AND a.minimum_nights <= ${query.minimum_nights}`)
+  if (query.maximum_nights) where_clause = where_clause.concat(` AND a.maximum_nights >= ${query.maximum_nights}`)
+  // postal code 
+  if (query.review_count) where_clause = where_clause.concat(` and a.number_of_reviews >= ${query.review_count}`)
+  if (query.postal_code) where_clause = where_clause.concat(` and a.postal_code = ${query.postal_code}`)
 
-    return where_clause
+  return where_clause
 }
 
 
@@ -210,6 +214,7 @@ function query_to_airbnb_where(query) {
 // is_instant_bookable*
 // host_acceptance_rate*
 // sort*
+// sort_order [ASC|DESC]*
 // Route Handler: airbnbs(req, res)
 // Description: Gets listings for airbnbs based on certain filter/requirements
 // Return Parameters: [result {​​id, listing_url, name, description,
@@ -219,6 +224,8 @@ function query_to_airbnb_where(query) {
 //        bathrooms_details, bedrooms, beds, amenities, price,
 // minimum_nights, maximum_nights, number_of_reviews, review_scores_rating, instant_bookable, bathrooms}]
 async function airbnbs(req, res) {
+  sort_order = req.query.sort_order ? req.query.sort_order : 'ASC';
+
   where_clause = query_to_airbnb_where(req.query);
 
   query_string = `SELECT id, a.listing_url, a.name, a.description, a.neighborhood_overview, a.picture_url, a.host_id, 
@@ -228,7 +235,7 @@ async function airbnbs(req, res) {
   FROM Airbnb a join Host h on a.host_id = h.host_id
   WHERE ${where_clause}`
 
-  if (req.query.sort) query_string = query_string.concat(` ORDER BY a.${sort}`)
+  if (req.query.sort) query_string = query_string.concat(` ORDER BY a.${sort} ${sort_oder}`)
 
   //res.send(query_string)
   connection.query(query_string, function (error, results, fields) {
@@ -244,11 +251,10 @@ async function airbnbs(req, res) {
 // /airbnbs_by_yelp/
 // Query Parameters: (In addition to those of /airbnbs)
 //    near_cuisine*
-//    nearby_restaurant_rating_ratio_lt*
-//    nearby_restaurant_rating_ratio_rt*
-//    postal_code*
 //    restaurants_within_miles* (num miles)
-//    Sort*
+//    min_restaurant_count
+//    nearby_restaurant_rating_ratio_lt*
+//    Sort* (same as airbnbs, with additional options “avg_stars”)
 // Route Handler: airbnb_yelps(req, res)
 // Description: Filter data on Airbnbs based on qualities of nearby amenities such as avg restaurant rating or being close to a grocery store.
 // Return Parameters: [result {​​id, listing_url, name, description,
@@ -256,9 +262,56 @@ async function airbnbs(req, res) {
 //        neighbourhood_cleansed, neighbourhood_group_cleansed, latitude,
 //        longitude, property_type, room_type, accommodates,
 //        bathrooms_text, bedrooms, beds, amenities, price,
-// minimum_nights, maximum_nights, number_of_reviews, review_scores_rating, instant_bookable, close_to_nearby_grocery_store, near_cuisine, proximate_restaurant_rating, num_restaurants_proximate}]
+// minimum_nights, maximum_nights, number_of_reviews, review_scores_rating, instant_bookable, avg_proximate_restaurant_rating, num_restaurants_proximate}]
 async function airbnbs_by_yelp(req, res) {
+  sort_order = req.query.sort_order ? req.query.sort_order : 'ASC';
+  where_clause = query_to_airbnb_where(req.query);
 
+  if (req.query.near_cuisine) {
+    where_clause = where_clause.concat(` AND YC.category='${req.query.near_cuisine}'`);
+  }
+
+  sort_clause = '';
+  if (req.query.sort) {
+    sort_clause = sort_clause.concat('ORDER BY ');
+    if (req.query.sort.includes('restaurant')) {
+      sort_clause = sort_clause.concat('T2.');
+    } else {
+      sort_clause = sort_clause.concat('A.');
+    }
+    sort_clause = sort_clause.concat(req.query.sort + ' ' + sort_order);
+  }
+
+  // console.log('ASDF');
+  // console.log(req.query.min_restaurant_count);
+  // console.log(`asdf ${'asdf' ? 0 : ''}`);
+
+  query_string = `WITH T1 as ( # nearby restaurants
+        SELECT DISTINCT a.id as airbnb_id, Y.business_id, Y.stars as yelp_stars
+        FROM Airbnb a
+                JOIN Yelp Y
+                    JOIN YelpCategories YC on Y.business_id = YC.business_id
+        WHERE ST_Distance_Sphere(POINT(a.longitude, a.latitude), POINT(Y.longitude, Y.latitude)) < 1 * 1600 AND
+              ${where_clause}
+    ), T2 as ( # average across nearby restaurants
+        SELECT airbnb_id, AVG(yelp_stars) as avg_proximate_restaurant_rating, COUNT(business_id) as num_restaurants_proximate
+        FROM T1
+        GROUP BY airbnb_id
+        ${req.query.min_restaurant_count ? `HAVING yelp_count >= ${req.query.min_restaurant_count}` : ''}
+    )
+    SELECT *
+    FROM Airbnb A JOIN T2 ON A.id = T2.airbnb_id
+    ${req.query.nearby_restaurant_rating_ratio_lt ? `WHERE T2.avg_proximate_restaurant_rating>=${req.query.nearby_restaurant_rating_ratio_lt}` : ''}
+    ${sort_clause};` // TODO: generify sort
+
+  connection.query(query_string, function (error, results, fields) {
+    if (error) {
+      console.log(error)
+      res.json({ error: error })
+    } else if (results) {
+      res.json({ results: results })
+    }
+  });
 }
 
 // /airbnb/:listing_id

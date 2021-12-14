@@ -10,7 +10,8 @@ import {
   Td,
   TableCaption,
   Center,
-  Heading
+  Heading,
+  Checkbox
 } from '@chakra-ui/react'
 
 
@@ -23,12 +24,18 @@ class ZipCodeStats extends React.Component {
     this.state = {
       price: [],
       rating: [],
-      most_options: []
+      most_options: [],
+      superhost: false
     }
+    this.fetchInfo = this.fetchInfo.bind(this);
   }
 
   componentDidMount() {
-    getZipCodeInfo().then((res) => {
+    this.fetchInfo();
+  }
+
+  fetchInfo() {
+    getZipCodeInfo(this.state.superhost).then((res) => {
       this.setState({
         price: res[2].results,
         rating: res[1].results,
@@ -42,6 +49,16 @@ class ZipCodeStats extends React.Component {
   render() {
     return (
       <div>
+        <Checkbox size='lg' colorScheme='red' defaultIsUnchecked
+          onChange={(e) => {
+            this.setState({ superhost: e.target.checked, price: [], rating: [], most_options: [] }, () => {
+              this.fetchInfo();
+            });
+          }}>
+          Show results only for super hosts? (High quality hosts)
+        </Checkbox>
+
+
         <Heading m={6}> Best Priced Neighborhoods</Heading>
         <Table size={'lg'}>
           <Thead>

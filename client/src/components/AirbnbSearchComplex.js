@@ -28,7 +28,7 @@ import {
 	BiCategory
 } from 'react-icons/bi'
 
-import AirbnbCardAndrew from './AirbnbCardAndrew'
+import AirbnbCard from './AirbnbCard'
 import RangeSliderWithLabel from './RangeSliderWithLabel'
 import SliderWithLabel from './SliderWithLabel'
 
@@ -41,6 +41,7 @@ class AirbnbSearchComplex extends React.Component {
 		this.state = {
 			numPages: 0,
 			page: 1,
+			pagesize: 3,
 			searchIsClicked: false,
 			num_beds_lt: 25,
 			num_beds_gt: 0,
@@ -49,8 +50,8 @@ class AirbnbSearchComplex extends React.Component {
 			stars_gt: 0,
 			minimum_nights: 0,
 			maximum_nights: 100,
-			postalCode: -1,
-			review_count: -1,
+			postalCode: 0,
+			review_count: 0,
 			is_instant_bookable: true,
 			host_acceptance_rate_gt: 0,
 			/* Complex Info! */
@@ -81,17 +82,40 @@ class AirbnbSearchComplex extends React.Component {
 		this.handleNearbyRestaurantRatio = this.handleNearbyRestaurantRatio.bind(this);
 		this.handleSearchButtonClick = this.handleSearchButtonClick.bind(this);
 
+		this.handlePrevPageButtonClick = this.handlePrevPageButtonClick.bind(this);
+		this.handleNextPageButtonClick = this.handleNextPageButtonClick.bind(this);
 
 	}
 
 	handleSearchButtonClick() {
 		// condition to check if complex or simple
+		// this.setState({
+		// 	results: [],
+		// 	numPages: 0
+		// })
+		console.log(this.state);
 		if (this.state.near_cuisine !== ""
-			|| this.state.restaurants_within_miles
-			|| this.state.min_restaurant_count
-			|| this.nearby_restaurant_avg_rating_lt !== 0
-			|| this.nearby_restaurant_avg_rating_rt !== 5) {
-			getAirbnbsComplex()
+			|| this.state.restaurants_within_miles !== 1.5
+			|| this.state.min_restaurant_count !== 0
+			|| this.state.nearby_restaurant_avg_rating_lt !== 0
+			|| this.state.nearby_restaurant_avg_rating_rt !== 5) {
+			getAirbnbsComplex(this.state.num_beds_lt,
+				this.state.num_beds_gt,
+				this.state.room_type,
+				this.state.stars_lt,
+				this.state.stars_gt,
+				this.state.minimum_nights,
+				this.state.maximum_nights,
+				this.state.postalCode,
+				this.state.review_count,
+				this.state.is_instant_bookable,
+				this.state.host_acceptance_rate_gt,
+				this.state.near_cuisine,
+				this.state.restaurants_within_miles,
+				this.state.min_restaurant_count,
+				this.state.nearby_restaurant_avg_rating_lt,
+				this.state.nearby_restaurant_avg_rating_rt,
+				this.state.sort)
 		} else {
 			getAirbnbsSimple(
 				this.state.num_beds_lt,
@@ -106,7 +130,14 @@ class AirbnbSearchComplex extends React.Component {
 				this.state.is_instant_bookable,
 				this.state.host_acceptance_rate_gt,
 				this.state.sort
-			)
+			).then((res) => {
+				console.log(res);
+				this.setState({
+					results: res.results,
+					numPages: res.results.length <= this.state.pagesize ? 1 : Math.ceil(res.results.length / this.state.pagesize)
+				})
+
+			})
 		}
 	}
 
@@ -177,6 +208,18 @@ class AirbnbSearchComplex extends React.Component {
 	}
 	handleMinCount(val) {
 		this.setState({ min_restaurant_count: val })
+	}
+
+	handleNextPageButtonClick() {
+		this.setState(prevState => ({
+			page: Math.min(prevState.page + 1, prevState.numPages)
+		}));
+	}
+
+	handlePrevPageButtonClick() {
+		this.setState(prevState => ({
+			page: Math.max(prevState.page - 1, 1)
+		}));
 	}
 
 
@@ -298,8 +341,77 @@ class AirbnbSearchComplex extends React.Component {
 						{this.state.searchIsClicked ? 'Reset' : 'Search'}
 					</Button>
 
-					<AirbnbCardAndrew />
-					<AirbnbCardAndrew />
+					{/* Results */}
+					<Box
+						display='flex'
+						mt='2'
+					>
+						{
+							this.state.results.length > 0
+								?
+								Array(this.state.page === this.state.numPages ?
+									(this.state.results.length <= this.state.pagesize ?
+										this.state.results.length :
+										this.state.results.length % this.state.pagesize) :
+									this.state.pagesize)
+									.fill('')
+									.map((_, i) => (
+										<AirbnbCard
+											key={this.state.results[(this.state.page - 1) * this.state.pagesize + i].id}
+											image_url={this.state.results[(this.state.page - 1) * this.state.pagesize + i].picture_url}
+											beds={this.state.results[(this.state.page - 1) * this.state.pagesize + i].beds}
+											baths={this.state.results[(this.state.page - 1) * this.state.pagesize + i].bathrooms}
+											title={this.state.results[(this.state.page - 1) * this.state.pagesize + i].name}
+											stars={this.state.results[(this.state.page - 1) * this.state.pagesize + i].review_scores_rating}
+											review_count={this.state.results[(this.state.page - 1) * this.state.pagesize + i].review_count}
+											formatted_price={this.state.results[(this.state.page - 1) * this.state.pagesize + i].price}
+											listing_id={this.state.results[(this.state.page - 1) * this.state.pagesize + i].id}
+										/>
+									))
+								: <></>
+						}
+					</Box>
+
+					<Box
+						display='flex'
+						mt='2'
+					>
+						{/* Previous Page Button */}
+						{
+							this.state.page > 1
+								?
+								<Button
+									backgroundColor={'white'}
+									// color={'red.400'}
+									mt='2'
+									mr='2'
+									onClick={this.handlePrevPageButtonClick}
+									size='lg'
+									variant='outline'
+								>
+									<ArrowLeftIcon />
+								</Button>
+								: <></>
+						}
+
+						{/* Next Page Button */}
+						{
+							this.state.page < this.state.numPages
+								?
+								<Button
+									backgroundColor={'white'}
+									// color={'red.400'}
+									mt='2'
+									onClick={this.handleNextPageButtonClick}
+									size='lg'
+									variant='outline'
+								>
+									<ArrowRightIcon />
+								</Button>
+								: <></>
+						}
+					</Box>
+
 				</VStack>
 			</div>
 		)

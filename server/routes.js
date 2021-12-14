@@ -219,7 +219,7 @@ async function airbnbs(req, res) {
   if (req.query.review_count) query_string = query_string.concat(` and a.number_of_reviews >= ${req.query.review_count}`)
   if (req.query.postal_code) query_string = query_string.concat(` and a.postal_code = ${req.query.postal_code}`)
 
-  if (req.query.sort) query_string = query_string.concat(` ORDER BY a.${sort}`)
+  if (req.query.sort) query_string = query_string.concat(` ORDER BY a.${req.query.sort}`)
 
   //res.send(query_string)
   connection.query(query_string, function (error, results, fields) {

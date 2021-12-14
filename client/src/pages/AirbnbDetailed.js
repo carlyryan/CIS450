@@ -1,5 +1,10 @@
 import React from 'react';
+import AirbnbCardDetailed from '../components/AirbnbCardDetailed';
 import MenuBar from '../components/MenuBar'
+
+import {
+  Center
+} from '@chakra-ui/react'
 
 class AirbnbDetailed extends React.Component {
 
@@ -13,7 +18,9 @@ class AirbnbDetailed extends React.Component {
       <div>
         {/* Define menu bar code here */}
         <MenuBar />
-        Airbnbs
+        <Center>
+          <AirbnbCardDetailed />
+        </Center>
       </div>
     )
   }

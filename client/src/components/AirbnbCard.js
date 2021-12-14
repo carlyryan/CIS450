@@ -16,10 +16,9 @@ import {
 
 import React from 'react'
 
-class AirbnbCardAndrew extends React.Component {
+class AirbnbCard extends React.Component {
     constructor(props) {
         super(props);
-
         this.defaultContent = this.defaultContent.bind(this);
     }
 
@@ -37,6 +36,8 @@ class AirbnbCardAndrew extends React.Component {
         return default_content;
     }
 
+
+
     render() {
         return (
             <div>
@@ -44,19 +45,19 @@ class AirbnbCardAndrew extends React.Component {
                     borderRadius='lg'
                     borderWidth='1px'
                     maxW='300px'
-                    mt='2'
+                    m='2'
                     overflow='hidden'
                 >
 
                     {/* Image */}
-                    <Image 
-                        src={this.props.image_url ? this.props.image_url : this.defaultContent().image_url} 
+                    <Image
+                        src={this.props.image_url ? this.props.image_url : this.defaultContent().image_url}
                     />
 
                     {/* Airbnb Information */}
                     <Box
                         p='6'
-                    >   
+                    >
                         {/* Bed/Bath */}
                         <Box
                             alignItems='center'
@@ -95,9 +96,9 @@ class AirbnbCardAndrew extends React.Component {
                             mt='2'
                         >
                             {this.props.formatted_price ? this.props.formatted_price : this.defaultContent().formatted_price}
-                            <Box 
-                                as='span' 
-                                color='gray.600' 
+                            <Box
+                                as='span'
+                                color='gray.600'
                                 fontSize='xs'
                             >
                                 /night
@@ -108,8 +109,7 @@ class AirbnbCardAndrew extends React.Component {
                         <Box
                             alignItems='center'
                             display='flex'
-                            mt='2'
-                        >
+                            mt='2'>
                             {/* this.props.rating */}
                             {
                                 Array(5)
@@ -120,20 +120,21 @@ class AirbnbCardAndrew extends React.Component {
                                             color={i < (this.props.rating ? this.props.rating : this.defaultContent().rating) ? 'red.400' : 'gray.300'}
                                         />
                                     )
-                                )
+                                    )
                             }
 
                             {/* this.props.review_count */}
-                            <Box 
-                                as='span' 
-                                color='gray.600' 
+                            <Box
+                                as='span'
+                                color='gray.600'
                                 fontSize='sm'
                                 ml='2'
-                                mt='2' 
+                                mt='2'
                             >
                                 {this.props.review_count ? this.props.review_count : this.defaultContent().review_count} reviews
                             </Box>
                         </Box>
+                        <Button as={'a'} href={"/airbnb/" + this.props.listing_id} mt={4}>View more</Button>
                     </Box>
                 </Box>
             </div>
@@ -141,4 +142,4 @@ class AirbnbCardAndrew extends React.Component {
     }
 }
 
-export default AirbnbCardAndrew
+export default AirbnbCard

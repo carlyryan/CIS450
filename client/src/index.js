@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { 
-  ChakraProvider 
+import {
+  ChakraProvider
 } from '@chakra-ui/react'
 
 import HomePage from './pages/HomePage';
@@ -16,9 +16,10 @@ import Statistics from './pages/Statistics'
 
 import {
   BrowserRouter as Router,
-  Routes, 
+  Routes,
   Route
 } from 'react-router-dom';
+import AirbnbDetailed from './pages/AirbnbDetailed';
 
 
 ReactDOM.render(
@@ -27,35 +28,41 @@ ReactDOM.render(
       <div>
         <Router>
           <Routes>
-            <Route 
+            <Route
               exact
               path="/"
-              element={<HomePage/>} 
+              element={<HomePage />}
             />
-            <Route 
+            <Route
               exact
               path="/airbnbs"
-              element={<AirbnbSearch/>} 
+              element={<AirbnbSearch />}
+            />
+
+            <Route
+              exact
+              path="/airbnb/:listing_id"
+              element={<AirbnbDetailed />}
             />
 
             {/* Restaurant Search */}
-            <Route 
+            <Route
               exact
               path="/restaurants"
-              element={<RestaurantSearch/>}
+              element={<RestaurantSearch />}
             />
 
             {/* Restaurant Details */}
             <Route
               exact
               path="/restaurant/:business_id"
-              element={<RestaurantDetails/>}
+              element={<RestaurantDetails />}
             />
 
-            <Route 
+            <Route
               exact
               path="/statistics"
-              element={<Statistics/>}
+              element={<Statistics />}
             />
           </Routes>
         </Router>

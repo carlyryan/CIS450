@@ -98,10 +98,24 @@ const getAirbnb = async (listing_id) => {
 }
 
 
+const getZipCodeInfo = async () => {
+	var q1 = fetch(`http://${config.server_host}:${config.server_port}/airbnb_zip?criterion=count`)
+	var q2 = fetch(`http://${config.server_host}:${config.server_port}/airbnb_zip?criterion=avg_rating`)
+	var q3 = fetch(`http://${config.server_host}:${config.server_port}/airbnb_zip?criterion=avg_price`)
+
+	var res = await Promise.all([q1, q2, q3]);
+	var r1 = await res[0].json();
+	var r2 = await res[1].json();
+	var r3 = await res[2].json();
+
+	return [r1, r2, r3];
+}
+
 export {
 	getRestaurant,
 	getRestaurants,
 	getAirbnbsSimple,
 	getAirbnbsComplex,
-	getAirbnb
+	getAirbnb,
+	getZipCodeInfo
 }

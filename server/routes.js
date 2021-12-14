@@ -267,6 +267,8 @@ async function airbnbs_by_yelp(req, res) {
   sort_order = req.query.sort_order ? req.query.sort_order : 'ASC';
   where_clause = query_to_airbnb_where(req.query);
 
+  range = req.query.restaurants_within_miles ? req.query.restaurants_within_miles : 1.5;
+
   if (req.query.near_cuisine) {
     where_clause = where_clause.concat(` AND YC.category='${req.query.near_cuisine}'`);
   }
@@ -291,7 +293,7 @@ async function airbnbs_by_yelp(req, res) {
         FROM Airbnb a
                 JOIN Yelp Y
                     JOIN YelpCategories YC on Y.business_id = YC.business_id
-        WHERE ST_Distance_Sphere(POINT(a.longitude, a.latitude), POINT(Y.longitude, Y.latitude)) < 1 * 1600 AND
+        WHERE ST_Distance_Sphere(POINT(a.longitude, a.latitude), POINT(Y.longitude, Y.latitude)) < ${range} * 1600 AND
               ${where_clause}
     ), T2 as ( # average across nearby restaurants
         SELECT airbnb_id, AVG(yelp_stars) as avg_proximate_restaurant_rating, COUNT(business_id) as num_restaurants_proximate

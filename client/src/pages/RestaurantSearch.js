@@ -4,16 +4,16 @@ import MenuBar from '../components/MenuBar'
 import RestaurantSearchComplex from '../components/RestaurantSearchComplex';
 import RestaurantCard from '../components/RestaurantCard';
 
-import { 
-  Center 
+import {
+  Center
 } from '@chakra-ui/react'
 
 class RestaurantSearch extends React.Component {
   render() {
     return (
       <div>
-        <MenuBar/>
-        <RestaurantSearchComplex/>
+        <MenuBar />
+        <RestaurantSearchComplex />
       </div>
     )
   }

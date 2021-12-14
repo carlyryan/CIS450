@@ -11,10 +11,10 @@ import {
 } from '@chakra-ui/react'
 
 import {
-	ArrowLeftIcon, 
+	ArrowLeftIcon,
 	ArrowRightIcon,
 	SearchIcon,
-  	StarIcon
+	StarIcon
 } from '@chakra-ui/icons';
 
 import {
@@ -38,11 +38,11 @@ class RestaurantSearchComplex extends React.Component {
 
 		this.state = {
 			numPages: 0,
-			page: 1, 
+			page: 1,
 			searchIsClicked: false,
 			searchCategory: "",
-			searchName:	"",
-			searchPostalCode: "", 
+			searchName: "",
+			searchPostalCode: "",
 			searchReviewCount: "",
 			searchStars: "",
 			results: [],
@@ -89,6 +89,8 @@ class RestaurantSearchComplex extends React.Component {
 			}));
 		} else {
 			getRestaurants(this.state.searchCategory, this.state.searchName, this.state.searchPostalCode, this.state.searchReviewCount, this.state.searchStars, "name").then(res => {
+				console.log(res);
+
 				this.setState(
 					{
 						results: res.results,
@@ -150,13 +152,13 @@ class RestaurantSearchComplex extends React.Component {
 						{this.state.searchIsClicked ? 'Reset' : 'Search'}
 					</Button>
 
-					{/* Category Filter */} 
+					{/* Category Filter */}
 					<InputGroup
 						maxW='300px'
 						mt='2'
 					>
 						<InputLeftElement
-							children={<Icon as={BiCategory} color={'red.400'}/>}
+							children={<Icon as={BiCategory} color={'red.400'} />}
 						/>
 						<Input
 							placeholder={this.state.searchCategory ? "" : "Category"}
@@ -172,13 +174,13 @@ class RestaurantSearchComplex extends React.Component {
 						mt='2'
 					>
 						<InputLeftElement
-							children={<SearchIcon color={'red.400'}/>}
+							children={<SearchIcon color={'red.400'} />}
 						/>
 						<Input
 							placeholder={this.state.searchName ? "" : "Name"}
 							value={this.state.searchName ? this.state.searchName : ""}
 							onChange={this.handleSearchNameChange}
-							variant='outline' 
+							variant='outline'
 						/>
 					</InputGroup>
 
@@ -188,7 +190,7 @@ class RestaurantSearchComplex extends React.Component {
 						mt='2'
 					>
 						<InputLeftElement
-							children={<Icon as={BiCurrentLocation} color={'red.400'}/>}
+							children={<Icon as={BiCurrentLocation} color={'red.400'} />}
 						/>
 						<Input
 							placeholder={this.state.searchPostalCode ? "" : "Postal Code"}
@@ -202,9 +204,9 @@ class RestaurantSearchComplex extends React.Component {
 					<InputGroup
 						maxW='300px'
 						mt='2'
-					>	
+					>
 						<InputLeftElement
-							children={<Icon as={AiOutlineNumber} color={'red.400'}/>}
+							children={<Icon as={AiOutlineNumber} color={'red.400'} />}
 						/>
 						<Input
 							placeholder={this.state.searchReviewCount ? "" : "Review Count"}
@@ -218,15 +220,15 @@ class RestaurantSearchComplex extends React.Component {
 					<InputGroup
 						maxW='300px'
 						mt='2'
-					>	
+					>
 						<InputLeftElement
-							children={<StarIcon color='red.400'/>}
+							children={<StarIcon color='red.400' />}
 						/>
-						<Input 
+						<Input
 							placeholder={this.state.searchStars ? "" : "Stars"}
 							value={this.state.searchStars ? this.state.searchStars : ""}
 							onChange={this.handleSearchStarsChange}
-							variant='outline' 
+							variant='outline'
 						/>
 					</InputGroup>
 
@@ -237,7 +239,7 @@ class RestaurantSearchComplex extends React.Component {
 					>
 						{
 							this.state.searchIsClicked && this.state.results.length > 0
-							? 
+								?
 								Array(this.state.page == this.state.numPages ? (this.state.results.length <= 3 ? this.state.results.length : this.state.results.length % 3) : 3)
 									.fill('')
 									.map((_, i) => (
@@ -249,8 +251,8 @@ class RestaurantSearchComplex extends React.Component {
 											stars={this.state.results[(this.state.page - 1) * 3 + i].stars}
 											review_count={this.state.results[(this.state.page - 1) * 3 + i].review_count}
 										/>
-										))
-							: <></>
+									))
+								: <></>
 						}
 					</Box>
 
@@ -261,7 +263,7 @@ class RestaurantSearchComplex extends React.Component {
 						{/* Previous Page Button */}
 						{
 							this.state.searchIsClicked && this.state.page > 1
-							? 
+								?
 								<Button
 									backgroundColor={'white'}
 									// color={'red.400'}
@@ -271,15 +273,15 @@ class RestaurantSearchComplex extends React.Component {
 									size='lg'
 									variant='outline'
 								>
-									<ArrowLeftIcon/>
+									<ArrowLeftIcon />
 								</Button>
-							: <></>
+								: <></>
 						}
 
 						{/* Next Page Button */}
 						{
 							this.state.searchIsClicked && this.state.page < this.state.numPages
-							? 
+								?
 								<Button
 									backgroundColor={'white'}
 									// color={'red.400'}
@@ -288,9 +290,9 @@ class RestaurantSearchComplex extends React.Component {
 									size='lg'
 									variant='outline'
 								>
-									<ArrowRightIcon/>
+									<ArrowRightIcon />
 								</Button>
-							: <></>
+								: <></>
 						}
 					</Box>
 

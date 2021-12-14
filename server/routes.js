@@ -235,7 +235,21 @@ async function airbnbs(req, res) {
   FROM Airbnb a join Host h on a.host_id = h.host_id
   WHERE ${where_clause}`
 
-  if (req.query.sort) query_string = query_string.concat(` ORDER BY a.${sort} ${sort_oder}`)
+  //beds
+  if (req.query.num_beds_lt) query_string = query_string.concat(` AND a.beds <= ${req.query.num_beds_lt}`)
+  if (req.query.num_beds_gt) query_string = query_string.concat(` AND a.beds >= ${req.query.num_beds_gt}`)
+  //stars
+  if (req.query.stars_lt) query_string = query_string.concat(` AND a.review_scores_rating <= ${req.query.stars_lt}`)
+  if (req.query.stars_gt) query_string = query_string.concat(` AND a.review_scores_rating >= ${req.query.stars_gt}`)
+  //min/max nights
+  if (req.query.minimum_nights) query_string = query_string.concat(` AND a.minimum_nights <= ${req.query.minimum_nights}`)
+  if (req.query.maximum_nights) query_string = query_string.concat(` AND a.maximum_nights >= ${req.query.maximum_nights}`)
+  // postal code 
+  if (req.query.review_count) query_string = query_string.concat(` and a.number_of_reviews >= ${req.query.review_count}`)
+  if (req.query.postal_code) query_string = query_string.concat(` and a.postal_code = ${req.query.postal_code}`)
+
+  if (req.query.sort) query_string = query_string.concat(` ORDER BY a.${req.query.sort}`)
+  if (req.query.sort) query_string = query_string.concat(` ORDER BY a.${sort} ${sort_order}`)
 
   //res.send(query_string)
   connection.query(query_string, function (error, results, fields) {

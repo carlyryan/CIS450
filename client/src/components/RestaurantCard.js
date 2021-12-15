@@ -22,7 +22,7 @@ class RestaurantCard extends React.Component {
     const default_content = {
       address: "1725 E Riverside Dr",
       business_id: "Xw8tuI30T-xihpzwBV-zJg",
-      image_url: "https://static01.nyt.com/images/2016/09/28/us/17xp-pepethefrog_web1/28xp-pepefrog-articleLarge.jpg?quality=75&auto=webp&disable=upscale",
+      image_url: "https://bsmedia.business-standard.com/media-handler.php?mediaPath=https://bsmedia.business-standard.com/_media/bs/img/article/2021-10/06/full/1633506841-1584.jpg&width=1200",
       name: "El Pollo Rey",
       postal_code: 78741,
       review_count: 11,

@@ -13,7 +13,9 @@ export default function StatCard(props) {
   const default_content = {
     heading: "Austing is a sleepless city",
     body: "Insert statistic about austin and the yelps there. Have this stat come from a "
-      + "query that is generated in real time."
+      + "query that is generated in real time.",
+    img :'https://res.cloudinary.com/maa/image/upload/c_lfill,g_auto,f_auto,q_auto:eco,h_1252,w_2160/v1/maac/-/media/images/metro-landing-page-heros/austin_tx.jpg'
+    
   }
 
   return (
@@ -27,9 +29,7 @@ export default function StatCard(props) {
       m={6}
     >
       <Image
-        src={
-          'https://res.cloudinary.com/maa/image/upload/c_lfill,g_auto,f_auto,q_auto:eco,h_1252,w_2160/v1/maac/-/media/images/metro-landing-page-heros/austin_tx.jpg'
-        }
+        src= {(props.img ? props.img : default_content.img)}
         layout={'fill'}
       />
       <Box p={6}>

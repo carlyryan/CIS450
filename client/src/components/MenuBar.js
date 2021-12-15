@@ -69,26 +69,6 @@ export default function MenuBar() {
           justify={'flex-end'}
           direction={'row'}
           spacing={6}>
-          <Button
-            as={'a'}
-            fontSize={'sm'}
-            fontWeight={400}
-            variant={'link'}
-            href={'#'}>
-            Sign In
-          </Button>
-          <Button
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            fontWeight={600}
-            color={'white'}
-            bg={'red.400'}
-            href={'#'}
-            _hover={{
-              bg: 'red.600',
-            }}>
-            Sign Up
-          </Button>
         </Stack>
       </Flex>
 
